@@ -35,11 +35,15 @@ classdef Image < dynamicprops
                 self.ROI.ymax=250;
                 
                 %Load data
-                self.load_raw_image()
-                self.load_back_image()
+                self.load_raw_image();
+                self.load_back_image();
                 
                 %Remove background
-                self.remove_background()
+                self.remove_background();
+                
+                %Free up memmory
+                self.unload_raw_image();
+                self.unload_back_image();
             end
         end
         
@@ -49,10 +53,20 @@ classdef Image < dynamicprops
             self.raw_image=self.extract_ROI(self.raw_image);
         end
         
+        function [] = unload_raw_image(self)
+            %Deletes the raw_image from memmory to free it up
+            self.raw_image=[];
+        end
+        
         function [] = load_back_image(self)
             %Loads the background image data from the harddrive
             self.back_image=Image.load_image_data(self.back_image_filename);
             self.back_image=self.extract_ROI(self.back_image);
+        end
+        
+        function [] = unload_back_image(self)
+            %Deletes the back_image from memmory to free it up
+            self.back_image=[];
         end
         
         function [ROI_image_array] = extract_ROI(self,image_array)
