@@ -2,7 +2,6 @@ classdef Image < dynamicprops
     %Stores the image data for one imaging
     %   This includes the raw_image, background image (back_image), the
     %   image (with background removed), and appropriate metadata.
-    %To implement: metadata support (maybe use dynamic properties?)
     
     properties
         %Region of Interest
@@ -80,6 +79,35 @@ classdef Image < dynamicprops
             %Subtracts the background from the raw image data
             %   In the future this algorithm should be improved
             self.image=self.raw_image-self.back_image;
+        end
+        
+        function [] = add_metadata(self,name,value)
+            %Adds a new attribute called name and assigns it to be value
+            %   name should be a string
+            addprop(self,name);
+            self.(name)=value;          
+        end
+        
+        function [] = set_metadata(self,name,value)
+            %Sets the value of the given metadata
+            %   name should be a string giving the name of the property and
+            %   value should be the desired value of that property
+            self.(name)=value;
+        end
+        
+        function [ value, exists ] = get_metadata(self,name)
+            %Checks to see if the instance has attribute name and returns
+            %its value
+            %  If the property exists, its value is returned as value.  If
+            %  the property does not exist, value=[] is returned.
+            %  Returns exists=1 if the property exists or 0 if it doesn't.
+            temp=self.findprop(name);
+            exists=0;
+            value=[];
+            if temp.isvalid()
+                exists=1;
+                value=self.(name);
+            end
         end
     end
     
