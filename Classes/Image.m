@@ -14,8 +14,12 @@ classdef Image < dynamicprops
         back_image_filename=''; %image of background signal
         back_image=[];
         image=[]; %image with background removed
+        
+        %Notes
+        notes=''; %String that can be used to store notes about this acquisition
     end
     
+    %Initialization
     methods
         function [self]=Image(image_name)
             %Initializes and image instance
@@ -69,42 +73,10 @@ classdef Image < dynamicprops
             self.back_ROI.ymin=110;
             self.back_ROI.ymax=140;
         end
-        
-        function [] = load_raw_image(self)
-            %Loads the raw image data from the harddrive
-            self.raw_image=Image.load_image_data(self.raw_image_filename);
-            self.raw_image=self.extract_ROI(self.raw_image);
-        end
-        
-        function [] = unload_raw_image(self)
-            %Deletes the raw_image from memmory to free it up
-            self.raw_image=[];
-        end
-        
-        function [] = load_back_image(self)
-            %Loads the background image data from the harddrive
-            self.back_image=Image.load_image_data(self.back_image_filename);
-            self.back_image=self.extract_ROI(self.back_image);
-        end
-        
-        function [] = unload_back_image(self)
-            %Deletes the back_image from memmory to free it up
-            self.back_image=[];
-        end
-        
-        function [ROI_image_array] = extract_ROI(self,image_array)
-            %Returns an array cointaining the region of interest of the
-            %given array
-            local_ROI=self.ROI;
-            ROI_image_array=image_array(local_ROI.xmin:local_ROI.xmax, local_ROI.ymin:local_ROI.ymax);
-        end
-        
-        function [] = remove_background(self)
-            %Subtracts the background from the raw image data
-            %   In the future this algorithm should be improved
-            self.image=self.raw_image-self.back_image;
-        end
-        
+    end
+    
+    %Metadata Manipulation
+    methods
         function [] = add_metadata(self,name,value)
             %Adds a new attribute called name and assigns it to be value
             %   name should be a string
@@ -133,6 +105,24 @@ classdef Image < dynamicprops
                 value=self.(name);
             end
         end
+    end
+    
+    %Data Manipulation/Calculation
+    methods
+        function [ROI_image_array] = extract_ROI(self,image_array)
+            %Returns an array cointaining the region of interest of the
+            %given array
+            local_ROI=self.ROI;
+            ROI_image_array=image_array(local_ROI.xmin:local_ROI.xmax, local_ROI.ymin:local_ROI.ymax);
+        end
+        
+        function [] = remove_background(self)
+            %Removes the background from raw_data
+            
+            %Multiple choices for algorithms
+            %self.back_simple_subtract();
+            self.back_scaled_subtract();
+        end
         
         function [] = compare_row_sums(self)
             %Plots the row sums of raw_image, back_image, and image
@@ -147,8 +137,33 @@ classdef Image < dynamicprops
         end
     end
     
-    methods (Hidden)
+    %Memmory management
+    methods
+        function [] = load_raw_image(self)
+            %Loads the raw image data from the harddrive
+            self.raw_image=Image.load_image_data(self.raw_image_filename);
+            self.raw_image=self.extract_ROI(self.raw_image);
+        end
         
+        function [] = unload_raw_image(self)
+            %Deletes the raw_image from memmory to free it up
+            self.raw_image=[];
+        end
+        
+        function [] = load_back_image(self)
+            %Loads the background image data from the harddrive
+            self.back_image=Image.load_image_data(self.back_image_filename);
+            self.back_image=self.extract_ROI(self.back_image);
+        end
+        
+        function [] = unload_back_image(self)
+            %Deletes the back_image from memmory to free it up
+            self.back_image=[];
+        end
+    end
+    
+    %Hidden helper subfunctions
+    methods (Hidden)
         function [] = compare_sums_helper(self,sum_direction)
             %Performs the plotting for compare_row_sums and
             %compare_col_sums
@@ -173,9 +188,32 @@ classdef Image < dynamicprops
             plot(scaling);
             title('(raw\_data row sum)/(back\_data row sum)');
         end
-        
     end
     
+    %Background Removal algorithms
+    methods (Hidden)
+        function [] = back_simple_subtract(self)
+            %Simply subtracts back_data from raw_data
+            self.image=self.raw_image-self.back_image;
+        end
+        
+        function [] = back_scaled_subtract(self)
+            %Scales back_data before subtracting it from raw_data to
+            %account for fluctuations in laser power.
+            %   Scaling factor is determined by summing the data over
+            %   back_ROI for both raw_data and back_data then taking the
+            %   ratio.  Therefore back_ROI should be a region in the image
+            %   in which the the imaging beam is easily visible, but the
+            %   shadow of the MOT is not present.
+            local_ROI=self.back_ROI;
+            raw_region=self.raw_image(local_ROI.xmin:local_ROI.xmax, local_ROI.ymin:local_ROI.ymax);
+            back_region=self.back_image(local_ROI.xmin:local_ROI.xmax, local_ROI.ymin:local_ROI.ymax);
+            scaling=sum(raw_region(:))/sum(back_region(:));
+            self.image=self.raw_image-scaling*self.back_image;
+        end
+    end
+    
+    %Static Class methods
     methods (Static)
         function [image_array] = load_image_data(filename)
             %Returns an array containing the data from filename
