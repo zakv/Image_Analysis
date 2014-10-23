@@ -1,0 +1,17 @@
+# Custom ignores
+
+# Don't add sample data to git #
+################################
+Sample_Data/
+
+# Linux generated files #
+#########################
+*.fuse*
+
+# Compiled Mex Files #
+######################
+*.mexa64
+
+# Tilde Backups #
+#################
+*~
