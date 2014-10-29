@@ -15,13 +15,14 @@ classdef Image < dynamicprops
         back_image=[];
         image=[]; %image with background removed
         
-        %Notes
+        %Other
+        index %Number indexing this image in the series of images taken
         notes=''; %String that can be used to store notes about this acquisition
     end
     
     %Initialization
     methods
-        function [self]=Image(image_name)
+        function [self]=Image(image_name,index)
             %Initializes and image instance
             %   image_name should be the name (with path but without
             %   extension) of the image data.  The raw_image should have
@@ -29,29 +30,18 @@ classdef Image < dynamicprops
             %   have the name image_name_back.ascii
             if nargin > 0
                 %Determine file names
-                self.set_file_names(image_name);
+                self.index=index;
+                self.set_file_names(image_name,index);
                 
                 %Set default values for initial parameters
                 self.set_default_values();
-                
-                %Load data
-                self.load_raw_image();
-                self.load_back_image();
-                
-                %Remove background
-                self.remove_background();
-                
-                %Free up memmory %Change of plans, let's keep this data
-                %around for now for debugging purposes.
-                %                 self.unload_raw_image();
-                %                 self.unload_back_image();
             end
         end
         
-        function [] = set_file_names(self,image_name)
+        function [] = set_file_names(self,image_name,index)
             %Determines the file names for raw_data and back_data
-            self.raw_image_filename=[image_name,'.ascii'];
-            self.back_image_filename=[image_name,'_back.ascii'];
+            self.raw_image_filename=[image_name, '_',num2str(index),'.ascii'];
+            self.back_image_filename=[image_name, '_',num2str(index),'_back.ascii'];
         end
         
         function [] = set_default_values(self)
@@ -135,6 +125,13 @@ classdef Image < dynamicprops
             sum_direction=1;
             self.compare_sums_helper(sum_direction);
         end
+        
+        function [] = calc_image(self)
+            %Loads data from the hard drive and calculates the image data
+            self.load_images();
+            self.remove_backgorund();
+            self.free_RAM();
+        end
     end
     
     %Memmory management
@@ -159,6 +156,18 @@ classdef Image < dynamicprops
         function [] = unload_back_image(self)
             %Deletes the back_image from memmory to free it up
             self.back_image=[];
+        end
+        
+        function [] = load_images(self)
+            %Loads the image data from the hard drive
+            self.load_raw_image();
+            self.load_back_image();
+        end
+        
+        function [] = free_RAM(self)
+            %Removes less-important data from memmory
+            self.unload_raw_image();
+            self.unload_back_image();
         end
     end
     
