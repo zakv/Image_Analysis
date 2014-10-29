@@ -18,6 +18,7 @@ classdef Image < dynamicprops
         image=[]; %image with background removed
         
         %Other
+        self_filename %File name used to save this instance of this class
         run_config %Configuration paramters sent to Main_PCO_... during this acquisition
         index %Number indexing this image in the series of images taken
         notes=''; %String that can be used to store notes about this acquisition
@@ -43,9 +44,11 @@ classdef Image < dynamicprops
         
         function [] = set_file_names(self,image_name,index)
             %Determines the file names for raw_data and back_data
-            self.raw_image_filename=[image_name, '_',num2str(index),'.ascii'];
-            self.back_image_filename=[image_name, '_',num2str(index),'_back.ascii'];
-            self.noise_image_filename=[image_name, '_',num2str(index),'_noise.ascii'];
+            prefix=[image_name, '_',num2str(index)];
+            self.raw_image_filename=[prefix,'_raw.ascii'];
+            self.back_image_filename=[prefix,'_back.ascii'];
+            self.noise_image_filename=[prefix,'_noise.ascii'];
+            self.self_filename=[prefix,'.mat'];
         end
         
         function [] = set_default_values(self)
