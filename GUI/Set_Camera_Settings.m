@@ -22,7 +22,7 @@ function varargout = Set_Camera_Settings(varargin)
 
 % Edit the above text to modify the response to help Set_Camera_Settings
 
-% Last Modified by GUIDE v2.5 10-Oct-2014 11:05:56
+% Last Modified by GUIDE v2.5 29-Oct-2014 03:10:20
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -85,7 +85,6 @@ handles.averageAbs=0;
 % Choose default command line output for Set_Camera_Settings
 handles.output = hObject;
 
-
 % Update handles structure
 guidata(hObject, handles);
 
@@ -101,7 +100,8 @@ function varargout = Set_Camera_Settings_OutputFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Get default command line output from handles structure
-varargout{1} = handles.output;
+%varargout{1} = handles.output;
+varargout{1} = handles;
 
 
 % --- Executes on selection change in SelectPixelRate.
@@ -983,6 +983,72 @@ guidata(hObject,handles);
 % --- Executes during object creation, after setting all properties.
 function save_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to save (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes when entered data in editable cell(s) in metadata.
+function metadata_CellEditCallback(hObject, eventdata, handles)
+% hObject    handle to metadata (see GCBO)
+% eventdata  structure with the following fields (see UITABLE)
+%	Indices: row and column indices of the cell(s) edited
+%	PreviousData: previous data for the cell(s) edited
+%	EditData: string(s) entered by the user
+%	NewData: EditData or its converted form set on the Data property. Empty if Data was not changed
+%	Error: error string when failed to convert EditData to appropriate value for Data
+% handles    structure with handles and user data (see GUIDATA)
+metadata=get(hObject,'Data');
+%Remove any disallowed characters from property names
+if eventdata.Indices(2)==1 %if editing first (property) column
+    name=eventdata.NewData;
+    if ~strcmp(name,'')%if the user did not just delete the property
+        %Make sure first character is a letter
+        if ~isstrprop(name(1),'alpha')
+            name=['a',name];
+        end
+        %Remove disallowed characters
+        alphanum=isstrprop(name,'alphanum');
+        underscores=name=='_';
+        allowed_chars=or(alphanum,underscores);
+        name=name(allowed_chars);
+        indices=eventdata.Indices;
+        metadata{indices(1),indices(2)}=name;
+        handles.metadata=metadata;
+        %Update GUI with name
+        set(hObject,'Data',metadata);
+    end
+end
+
+
+% --- Executes on button press in add_row.
+function add_row_Callback(hObject, eventdata, handles)
+% hObject    handle to add_row (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+data = get(handles.metadata, 'data');
+data(end+1,:) = cell(1,2);
+set(handles.metadata,'Data',data)
+
+
+
+function notes_Callback(hObject, eventdata, handles)
+% hObject    handle to notes_panel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of notes_panel as text
+%        str2double(get(hObject,'String')) returns contents of notes_panel as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function notes_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to notes_panel (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
