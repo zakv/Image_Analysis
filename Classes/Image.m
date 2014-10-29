@@ -25,9 +25,9 @@ classdef Image < dynamicprops
         function [self]=Image(image_name,index)
             %Initializes and image instance
             %   image_name should be the name (with path but without
-            %   extension) of the image data.  The raw_image should have
-            %   the name image_name.ascii and the background data should
-            %   have the name image_name_back.ascii
+            %   extension) of the image data.  index is a number used to
+            %   keep track of all the different images from one series of
+            %   photos.
             if nargin > 0
                 %Determine file names
                 self.index=index;
