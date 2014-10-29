@@ -85,6 +85,13 @@ handles.averageAbs=0;
 % Choose default command line output for Set_Camera_Settings
 handles.output = hObject;
 
+%Add paths to use other necessary classes, functions, etc.
+project_root=fullfile('..');
+addpath(fullfile(project_root,'Camera_Control'));
+addpath(fullfile(project_root,'Classes'));
+addpath(fullfile(project_root,'Functions'));
+addpath(fullfile(project_root,'Scripts'));
+
 % Update handles structure
 guidata(hObject, handles);
 
