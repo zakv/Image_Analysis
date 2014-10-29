@@ -13,6 +13,8 @@ classdef Image < dynamicprops
         raw_image=[];
         back_image_filename=''; %image of background signal
         back_image=[];
+        noise_image_filename=''; %image of noise
+        noise_image=[];
         image=[]; %image with background removed
         
         %Other
@@ -43,6 +45,7 @@ classdef Image < dynamicprops
             %Determines the file names for raw_data and back_data
             self.raw_image_filename=[image_name, '_',num2str(index),'.ascii'];
             self.back_image_filename=[image_name, '_',num2str(index),'_back.ascii'];
+            self.noise_image_filename=[image_name, '_',num2str(index),'_noise.ascii'];
         end
         
         function [] = set_default_values(self)
@@ -196,16 +199,29 @@ classdef Image < dynamicprops
             self.back_image=[];
         end
         
+        function [] = load_noise_image(self)
+            %Loads the noise image data from the harddrive
+            self.noise_image=Image.load_image_data(self.noise_image_filename);
+            self.noise_image=self.extract_ROI(self.noise_image);
+        end
+        
+        function [] = unload_noise_image(self)
+            %Deletes the noise_image from memmory to free it up
+            self.noise_image=[];
+        end
+        
         function [] = load_images(self)
             %Loads the image data from the hard drive
             self.load_raw_image();
             self.load_back_image();
+            self.load_noise_image();
         end
         
         function [] = free_RAM(self)
             %Removes less-important data from memmory
             self.unload_raw_image();
             self.unload_back_image();
+            self.unload_noise_image();
         end
     end
     
