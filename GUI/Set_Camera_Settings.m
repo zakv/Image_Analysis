@@ -107,8 +107,7 @@ function varargout = Set_Camera_Settings_OutputFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Get default command line output from handles structure
-%varargout{1} = handles.output;
-varargout{1} = handles;
+varargout{1} = handles.output;
 
 
 % --- Executes on selection change in SelectPixelRate.
