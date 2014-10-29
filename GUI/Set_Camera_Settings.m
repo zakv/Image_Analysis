@@ -307,10 +307,11 @@ function run_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 %Main_PCO_Pixelfly_USB_28062012(handles.imacount,handles.pixel_rate,handles.double_image,handles.trigger,handles.exposure_time,handles.timebase,handles.IR,handles.backloader,handles.sensor_format,handles.h_binning,handles.v_binning);
-
+run_config=handles;
+run_config.double_image=0;
+Main_PCO_Pixelfly_USB_07102014_flu(run_config);
 Main_PCO_Pixelfly_USB_07102014_flu(handles.namefile,handles.imacount,handles.pixel_rate,0,handles.trigger,handles.exposure_time,handles.timebase,handles.IR,handles.backloader,handles.sensor_format,handles.h_binning,handles.v_binning,handles.average,handles.twoimage);
 %Main_PCO_Pixelfly_USB_07082012_flu_double(handles.imacount,handles.pixel_rate,0,handles.trigger,handles.exposure_time,handles.timebase,handles.IR,handles.backloader,handles.sensor_format,handles.h_binning,handles.v_binning,handles.average);
-%display(handles.twoimage)
 %save_file=sprintf('Log-image-%04d-%02d-%02d-%02d-%02d-%2.2g.txt',clock);
 %Logo=['Flurescence image: Pixel rate: ' num2str(handles.pixel_rate)  '; trigger: ' num2str(handles.trigger) ...,
     %'; expossure time and time base: ' num2str(handles.exposure_time) ' ' num2str(handles.timebase) '; # of images: ' num2str(handles.imacount) ...,

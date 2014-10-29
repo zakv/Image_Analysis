@@ -1,4 +1,6 @@
-function Main_PCO_Pixelfly_USB_31072012_flu(savingname,imacount,PR,DI,TR,EX,TI,IR,BL,SF,HB,VB,average,twoimage)
+function Main_PCO_Pixelfly_USB_07102014_flu(run_config)
+%This function takes a lot of arguments, so it's easier to pass them as one
+%big object.  Below are the meanings of some of that object's attributes.
 %Here PR means pixel rate.
 %DI means double image mode and 1 is on and 0 is off.
 %TR means trigger and 0 auto 1 software 2 external.
@@ -39,6 +41,23 @@ function Main_PCO_Pixelfly_USB_31072012_flu(savingname,imacount,PR,DI,TR,EX,TI,I
 %
 %free allocated memory
 %stop camera
+
+%unpack data from argument object
+savingname=run_config.namefile;
+imacount=run_config.imacount;
+PR=run_config.pixel_rate;
+DI=run_config.double_image;
+TR=run_config.trigger;
+EX=run_config.exposure_time;
+TI=run_config.timebase;
+IR=run_config.IR;
+BL=run_config.backloader;
+SF=run_config.sensor_format;
+HB=run_config.h_binning;
+VB=run_config.v_binning;
+average=run_config.average;
+twoimage=run_config.twoimage;
+
 SNumber=1;
 DI=0;
 Total=zeros(1,imacount);

@@ -16,6 +16,7 @@ classdef Image < dynamicprops
         image=[]; %image with background removed
         
         %Other
+        run_config %Configuration paramters sent to Main_PCO_... during this acquisition
         index %Number indexing this image in the series of images taken
         notes=''; %String that can be used to store notes about this acquisition
     end
