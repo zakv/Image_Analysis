@@ -1031,7 +1031,7 @@ if eventdata.Indices(2)==1 %if editing first (property) column
     name=eventdata.NewData;
     if ~strcmp(name,'')%if the user did not just delete the property
         %Make sure first character is a letter
-        if ~isstrprop(name(1),'alpha')
+        if ~isempty(name) && ~isstrprop(name(1),'alpha')
             name=['a',name];
         end
         %Remove disallowed characters
