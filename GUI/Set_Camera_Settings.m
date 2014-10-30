@@ -283,10 +283,14 @@ function SelectNumberOfImages_Callback(hObject, eventdata, handles)
 % hObject    handle to SelectNumberOfImages (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-val=get(hObject,'Value');
 str=get(hObject,'String');
 temp2=str2num(str);
-handles.imacount=temp2;
+if isempty(temp2) %Can happen if someone enters something that's not a number
+    temp2=1; %Reset to 1 if someone enters something that's not a number
+end
+handles.starting_index=temp2;
+temp2=num2str(temp2);
+set(hObject,'String',temp2);
 guidata(hObject,handles);
 
 % Hints: get(hObject,'String') returns contents of SelectNumberOfImages as text
@@ -659,10 +663,14 @@ function SelectNumberOfImagesAbs_Callback(hObject, eventdata, handles)
 % hObject    handle to SelectNumberOfImagesAbs (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-val=get(hObject,'Value');
 str=get(hObject,'String');
 temp2=str2num(str);
-handles.imacountAbs=temp2;
+if isempty(temp2) %Can happen if someone enters something that's not a number
+    temp2=1; %Reset to 1 if someone enters something that's not a number
+end
+handles.starting_index=temp2;
+temp2=num2str(temp2);
+set(hObject,'String',temp2);
 guidata(hObject,handles);
 
 % Hints: get(hObject,'String') returns contents of SelectNumberOfImagesAbs as text
@@ -1095,10 +1103,14 @@ function Starting_Index_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of Starting_Index as text
 %        str2double(get(hObject,'String')) returns contents of Starting_Index as a double
-val=get(hObject,'Value');
 str=get(hObject,'String');
 temp2=str2num(str);
+if isempty(temp2) %Can happen if someone enters something that's not a number
+    temp2=1; %Reset to 1 if someone enters something that's not a number
+end
 handles.starting_index=temp2;
+temp2=num2str(temp2);
+set(hObject,'String',temp2);
 guidata(hObject,handles);
 
 % --- Executes during object creation, after setting all properties.
