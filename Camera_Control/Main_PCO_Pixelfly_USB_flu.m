@@ -1,6 +1,8 @@
-function Main_PCO_Pixelfly_USB_07102014_flu(run_config)
+function Main_PCO_Pixelfly_USB_07102014_flu(run_config,image_instance_data)
 %This function takes a lot of arguments, so it's easier to pass them as one
 %big object.  Below are the meanings of some of that object's attributes.
+%image_instance_data should be a structure whose attributes will be
+%transferred to the saved Image instances.
 %Here PR means pixel rate.
 %DI means double image mode and 1 is on and 0 is off.
 %TR means trigger and 0 auto 1 software 2 external.
@@ -478,9 +480,13 @@ for n=1:imacount
         result_image3=image_stack3;
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if (average==0)
-            dlmwrite(fullfile('.',save_file7), result_image1','delimiter', '\t');
-            dlmwrite(fullfile('.',save_file71), result_image2','delimiter', '\t');
-            dlmwrite(fullfile('.',save_file72), result_image3','delimiter', '\t');
+            pic=Image(namefile,SNumber+n-1);
+            pic.run_config=runconfig;
+            pic.tranfer_metadata(image_instance_data);
+            save_object(pic,pic.self_filename);
+            dlmwrite(pic.raw_image_filename, result_image1','delimiter', '\t');
+            dlmwrite(pic.back_image_filename, result_image2','delimiter', '\t');
+            dlmwrite(pic.noise_image_filename, result_image3','delimiter', '\t');
         end
         %total_image1=double(total_image1) + double(result_image1');
         %total_image2=double(total_image2) + double(result_image2');
@@ -505,7 +511,11 @@ for n=1:imacount
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if (average==0)
-            dlmwrite(fullfile('.',save_file7), result_image1','delimiter', '\t');
+            pic=Image(namefile,SNumber+n-1);
+            pic.run_config=runconfig;
+            pic.tranfer_metadata(image_instance_data);
+            save_object(pic,pic.self_filename);
+            dlmwrite(pic.raw_image_filename, result_image1','delimiter', '\t');
         end
         %total_image1=double(total_image1) + double(result_image1');
         %total_image2=double(total_image2) + double(result_image2');

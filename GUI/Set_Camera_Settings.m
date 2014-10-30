@@ -307,10 +307,21 @@ function run_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 %Main_PCO_Pixelfly_USB_28062012(handles.imacount,handles.pixel_rate,handles.double_image,handles.trigger,handles.exposure_time,handles.timebase,handles.IR,handles.backloader,handles.sensor_format,handles.h_binning,handles.v_binning);
+
+%Set the run_config parameters that control how Main_PCO... runs
 run_config=handles;
 run_config.double_image=0;
-Main_PCO_Pixelfly_USB_07102014_flu(run_config);
-Main_PCO_Pixelfly_USB_07102014_flu(handles.namefile,handles.imacount,handles.pixel_rate,0,handles.trigger,handles.exposure_time,handles.timebase,handles.IR,handles.backloader,handles.sensor_format,handles.h_binning,handles.v_binning,handles.average,handles.twoimage);
+
+%Get data that will be stored in the Image instance
+image_instance_data.notes=handles.notes;
+metadata_cells = get(handles.metadata, 'data');
+metadata_object=metadata_table_to_object(metadata_cells);
+image_instance_data=combine_metadata(metadata_object,image_instance_data);
+
+%Run the camera data acquisition software
+Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data);
+
+%Main_PCO_Pixelfly_USB_07102014_flu(handles.namefile,handles.imacount,handles.pixel_rate,0,handles.trigger,handles.exposure_time,handles.timebase,handles.IR,handles.backloader,handles.sensor_format,handles.h_binning,handles.v_binning,handles.average,handles.twoimage);
 %Main_PCO_Pixelfly_USB_07082012_flu_double(handles.imacount,handles.pixel_rate,0,handles.trigger,handles.exposure_time,handles.timebase,handles.IR,handles.backloader,handles.sensor_format,handles.h_binning,handles.v_binning,handles.average);
 %save_file=sprintf('Log-image-%04d-%02d-%02d-%02d-%02d-%2.2g.txt',clock);
 %Logo=['Flurescence image: Pixel rate: ' num2str(handles.pixel_rate)  '; trigger: ' num2str(handles.trigger) ...,
