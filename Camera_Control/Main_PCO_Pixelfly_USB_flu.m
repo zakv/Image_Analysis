@@ -59,9 +59,10 @@ HB=run_config.h_binning;
 VB=run_config.v_binning;
 average=run_config.average;
 twoimage=run_config.twoimage;
+SNumber=run_config.starting_index;
+display(run_config);
+error('zak','vanity')
 
-SNumber=1;
-DI=0;
 Total=zeros(1,imacount);
 StandD=zeros(1,imacount);
 meanofROI=zeros(1,imacount);
