@@ -5,7 +5,7 @@ function [ obj ] = load_object( file_name )
 if length(file_name)<4 || ~strcmp(file_name(end-3:end),'.mat')
     file_name=strcat(file_name,'.mat');
 end
-returned_object=load(file_name,'data');
+returned_object=load(file_name,'object');
 obj=returned_object.object;
 
 end
