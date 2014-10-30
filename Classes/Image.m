@@ -3,6 +3,7 @@ classdef Image < dynamicprops
     %   This includes the raw_image, background image (back_image), the
     %   image (with background removed), and appropriate metadata.
     
+    %Typical properties
     properties
         %Region of Interest
         ROI %will have xmin xmax, ymin, ymax attributes
@@ -23,6 +24,12 @@ classdef Image < dynamicprops
         run_config %Configuration paramters sent to Main_PCO_... during this acquisition
         index %Number indexing this image in the series of images taken
         notes=''; %String that can be used to store notes about this acquisition
+    end
+    
+    %Dependent properties
+    properties (Dependent)
+        has_back_image %Returns true if the background image file exists
+        has_noise_image %Returns true if the noise image files exists
     end
     
     %Initialization
@@ -280,6 +287,24 @@ classdef Image < dynamicprops
         end
     end
     
+    %Getters and Setters
+    methods
+        function [exists] = get.has_back_image(self)
+            %Getter that figures out if the background image file exists
+            exists=false;
+            if exist(self.back_image_filename,'file')==2
+                exists=true;
+            end
+        end
+        
+        function [exists] = get.has_noise_image(self)
+            %Getter that figures out if the background image file exists
+            exists=false;
+            if exist(self.noise_image_filename,'file')==2
+                exists=true;
+            end
+        end
+    end
     %Static Class methods
     methods (Static)
         function [image_array] = load_image_data(filename)
