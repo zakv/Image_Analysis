@@ -90,7 +90,7 @@ handles.metadata=cell(0,2);
 handles.output = hObject;
 
 %Add paths to use other necessary classes, functions, etc.
-project_root=fullfile('..');
+project_root=fullfile(mfilename('fullpath'),'..','..');
 addpath(fullfile(project_root,'Camera_Control'));
 addpath(fullfile(project_root,'Classes'));
 addpath(fullfile(project_root,'Functions'));
