@@ -2,6 +2,7 @@ function [ metadata_object ] = metadata_table_to_object( metadata_table )
 %Given the metadata table from the GUI, returns an object with the
 %specified properties and values.
 
+metadata_object=struct(); %initialize output
 %Iterate over table rows
 jmax=size(metadata_table,1);
 for j=1:jmax
