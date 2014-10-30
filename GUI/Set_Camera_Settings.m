@@ -317,7 +317,7 @@ run_config=handles;
 run_config.double_image=0;
 
 %Get data that will be stored in the Image instance
-image_instance_data.notes=handles.Notes;
+image_instance_data.notes=handles.notes;
 metadata_cells = get(handles.Metadata, 'data');
 metadata_object=metadata_table_to_object(metadata_cells);
 image_instance_data=combine_metadata(metadata_object,image_instance_data);

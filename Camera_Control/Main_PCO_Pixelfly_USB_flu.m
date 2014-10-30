@@ -479,9 +479,9 @@ for n=1:imacount
         result_image3=image_stack3;
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if (average==0)
-            pic=Image(namefile,SNumber+n-1);
-            pic.run_config=runconfig;
-            pic.tranfer_metadata(image_instance_data);
+            pic=Image(savingname,SNumber+n-1);
+            pic.run_config=run_config;
+            pic.transfer_metadata(image_instance_data);
             save_object(pic,pic.self_filename);
             dlmwrite(pic.raw_image_filename, result_image1','delimiter', '\t');
             dlmwrite(pic.back_image_filename, result_image2','delimiter', '\t');
@@ -510,9 +510,9 @@ for n=1:imacount
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if (average==0)
-            pic=Image(namefile,SNumber+n-1);
-            pic.run_config=runconfig;
-            pic.tranfer_metadata(image_instance_data);
+            pic=Image(savingname,SNumber+n-1);
+            pic.run_config=run_config;
+            pic.transfer_metadata(image_instance_data);
             save_object(pic,pic.self_filename);
             dlmwrite(pic.raw_image_filename, result_image1','delimiter', '\t');
         end
