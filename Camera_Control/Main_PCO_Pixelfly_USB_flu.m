@@ -60,8 +60,6 @@ VB=run_config.v_binning;
 average=run_config.average;
 twoimage=run_config.twoimage;
 SNumber=run_config.starting_index;
-display(run_config);
-error('zak','vanity')
 
 Total=zeros(1,imacount);
 StandD=zeros(1,imacount);

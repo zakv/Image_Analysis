@@ -22,7 +22,7 @@ function varargout = Set_Camera_Settings(varargin)
 
 % Edit the above text to modify the response to help Set_Camera_Settings
 
-% Last Modified by GUIDE v2.5 29-Oct-2014 21:00:32
+% Last Modified by GUIDE v2.5 29-Oct-2014 21:28:14
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -82,6 +82,10 @@ handles.twoimage=1;
 
 handles.backloaderAbs=0;
 handles.averageAbs=0;
+
+handles.starting_index=1;
+handles.notes='';
+handles.metadata=cell(0,2);
 % Choose default command line output for Set_Camera_Settings
 handles.output = hObject;
 
@@ -313,8 +317,8 @@ run_config=handles;
 run_config.double_image=0;
 
 %Get data that will be stored in the Image instance
-image_instance_data.notes=handles.notes;
-metadata_cells = get(handles.metadata, 'data');
+image_instance_data.notes=handles.Notes;
+metadata_cells = get(handles.Metadata, 'data');
 metadata_object=metadata_table_to_object(metadata_cells);
 image_instance_data=combine_metadata(metadata_object,image_instance_data);
 
@@ -1011,9 +1015,9 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes when entered data in editable cell(s) in metadata.
-function metadata_CellEditCallback(hObject, eventdata, handles)
-% hObject    handle to metadata (see GCBO)
+% --- Executes when entered data in editable cell(s) in Metadata.
+function Metadata_CellEditCallback(hObject, eventdata, handles)
+% hObject    handle to Metadata (see GCBO)
 % eventdata  structure with the following fields (see UITABLE)
 %	Indices: row and column indices of the cell(s) edited
 %	PreviousData: previous data for the cell(s) edited
@@ -1037,35 +1041,40 @@ if eventdata.Indices(2)==1 %if editing first (property) column
         name=name(allowed_chars);
         indices=eventdata.Indices;
         metadata{indices(1),indices(2)}=name;
-        handles.metadata=metadata;
         %Update GUI with name
         set(hObject,'Data',metadata);
     end
 end
+handles.metadata=metadata;
+guidata(hObject,handles);
 
 
-% --- Executes on button press in add_row.
-function add_row_Callback(hObject, eventdata, handles)
-% hObject    handle to add_row (see GCBO)
+% --- Executes on button press in Add_Row.
+function Add_Row_Callback(hObject, eventdata, handles)
+% hObject    handle to Add_Row (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-data = get(handles.metadata, 'data');
-data(end+1,:) = cell(1,2);
-set(handles.metadata,'Data',data)
+metadata = get(handles.Metadata, 'data');
+metadata(end+1,:) = cell(1,2);
+handles.metadata=metadata;
+set(handles.Metadata,'Data',metadata)
+guidata(hObject,handles);
 
 
 
-function notes_Callback(hObject, eventdata, handles)
+function Notes_Callback(hObject, eventdata, handles)
 % hObject    handle to notes_panel (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hints: get(hObject,'String') returns contents of notes_panel as text
 %        str2double(get(hObject,'String')) returns contents of notes_panel as a double
+handles.notes=get(hObject,'String');
+guidata(hObject,handles);
 
 
 % --- Executes during object creation, after setting all properties.
-function notes_CreateFcn(hObject, eventdata, handles)
+function Notes_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to notes_panel (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -1078,13 +1087,13 @@ end
 
 
 
-function starting_index_Callback(hObject, eventdata, handles)
-% hObject    handle to starting_index (see GCBO)
+function Starting_Index_Callback(hObject, eventdata, handles)
+% hObject    handle to Starting_Index (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of starting_index as text
-%        str2double(get(hObject,'String')) returns contents of starting_index as a double
+% Hints: get(hObject,'String') returns contents of Starting_Index as text
+%        str2double(get(hObject,'String')) returns contents of Starting_Index as a double
 val=get(hObject,'Value');
 str=get(hObject,'String');
 temp2=str2num(str);
@@ -1092,8 +1101,8 @@ handles.starting_index=temp2;
 guidata(hObject,handles);
 
 % --- Executes during object creation, after setting all properties.
-function starting_index_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to starting_index (see GCBO)
+function Starting_Index_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to Starting_Index (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
