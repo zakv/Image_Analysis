@@ -480,6 +480,7 @@ for n=1:imacount
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if (average==0)
             pic=Image(savingname,SNumber+n-1);
+            pic.timestamp=clock();
             pic.run_config=run_config;
             pic.transfer_metadata(image_instance_data);
             save_object(pic,pic.self_filename);
@@ -511,6 +512,7 @@ for n=1:imacount
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if (average==0)
             pic=Image(savingname,SNumber+n-1);
+            pic.timestamp=clock();
             pic.run_config=run_config;
             pic.transfer_metadata(image_instance_data);
             save_object(pic,pic.self_filename);

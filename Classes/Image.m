@@ -9,6 +9,7 @@ classdef Image < dynamicprops
         back_ROI %Region to use for scaling background signal (coordinates relative to ROI)
         
         %Actual Image data
+        timestamp=[]; %time at which the image was taken
         raw_image_filename=''; %image with signal over background
         raw_image=[];
         back_image_filename=''; %image of background signal
