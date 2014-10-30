@@ -114,10 +114,13 @@ if (~libisloaded('PCO_CAM_SDK'))
     else
         dir_name='32bit';
     end
-    %Get path to include
-    includepath=fullfile(mfilename('fullpath'),dir_name);
-	loadlibrary('SC2_Cam','SC2_CamExport.h','alias','PCO_CAM_SDK','includepath',includepath);
-	disp('PCO_CAM_SDK library is loaded!');
+    %Change directory to load library, then return to current directory
+    working_dir=pwd;
+    lib_dir=fullfile(mfilename('fullpath'),'..',dir_name);
+    cd(lib_dir);
+    loadlibrary('SC2_Cam','SC2_CamExport.h','alias','PCO_CAM_SDK');
+    cd(working_dir);
+    disp('PCO_CAM_SDK library is loaded!');
 end
 
 if((exist('glvar','var'))&& ...
