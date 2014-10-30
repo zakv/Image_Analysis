@@ -28,6 +28,7 @@ classdef Image < dynamicprops
     
     %Dependent properties
     properties (Dependent)
+        has_raw_image %Returns true if the raw image file exists
         has_back_image %Returns true if the background image file exists
         has_noise_image %Returns true if the noise image files exists
     end
@@ -149,7 +150,7 @@ classdef Image < dynamicprops
         end
     end
     
-    %Data Manipulation/Calculation
+    %Data Manipulation/Calculation/Plotting
     methods
         function [ROI_image_array] = extract_ROI(self,image_array)
             %Returns an array cointaining the region of interest of the
@@ -161,9 +162,22 @@ classdef Image < dynamicprops
         function [] = remove_background(self)
             %Removes the background from raw_data
             
+            has_back_image=self.has_back_image;
+            has_noise_image=self.has_noise_image;
             %Multiple choices for algorithms
-            %self.back_simple_subtract();
-            self.back_scaled_subtract();
+            if has_back_image && has_noise_image
+                %Subtract noise then do scaled subtraction
+                self.back_noise_scaled_subtract();
+            elseif has_back_image && ~has_noise_image
+                %Don't have noise data
+                self.back_scaled_subtract()
+            elseif ~has_back_image && has_noise_image
+                %Just subtract out the noise
+                self.back_noise_subtract();
+            elseif ~has_back_image && ~has_noise_image
+                %Just use raw image
+                self.back_nothing();
+            end
         end
         
         function [] = compare_row_sums(self)
@@ -176,6 +190,17 @@ classdef Image < dynamicprops
             %Plots the row sums of raw_image, back_image, and image
             sum_direction=1;
             self.compare_sums_helper(sum_direction);
+        end
+        
+        function [] = show_image(self)
+            %displays the image data as a figure
+            %   Automatically calls self.calc_image() if necessary
+            if isempty(self.image)
+                self.calc_image();
+            end
+            figure('WindowStyle','docked');
+            scale=[ max(self.image(:)), max(self.image(:)) ];
+            imshow(self.image,scale);
         end
         
         function [] = calc_image(self)
@@ -222,10 +247,16 @@ classdef Image < dynamicprops
         end
         
         function [] = load_images(self)
-            %Loads the image data from the hard drive
-            self.load_raw_image();
-            self.load_back_image();
-            self.load_noise_image();
+            %Loads the image data from the hard drive if they exist
+            if self.has_raw_image
+                self.load_raw_image();
+            end
+            if self.has_back_image
+                self.load_back_image();
+            end
+            if self.has_noise_image
+                self.load_noise_image();
+            end
         end
         
         function [] = free_RAM(self)
@@ -268,6 +299,16 @@ classdef Image < dynamicprops
     methods (Hidden)
         function [] = back_simple_subtract(self)
             %Simply subtracts back_data from raw_data
+            
+            %load data form hard drive if necessary
+            if isempty(self.raw_image)
+                self.load_raw_image();
+            end
+            if isempty(self.back_image)
+                self.load_back_image();
+            end
+            
+            %Do the math
             self.image=self.raw_image-self.back_image;
         end
         
@@ -279,16 +320,86 @@ classdef Image < dynamicprops
             %   ratio.  Therefore back_ROI should be a region in the image
             %   in which the the imaging beam is easily visible, but the
             %   shadow of the MOT is not present.
+            
+            %load data from hard drive if necessary
+            if isempty(self.raw_image)
+                self.load_raw_image();
+            end
+            if isempty(self.back_image)
+                self.load_back_image();
+            end
+            
+            %Do the math
             local_ROI=self.back_ROI;
             raw_region=self.raw_image(local_ROI.xmin:local_ROI.xmax, local_ROI.ymin:local_ROI.ymax);
             back_region=self.back_image(local_ROI.xmin:local_ROI.xmax, local_ROI.ymin:local_ROI.ymax);
             scaling=sum(raw_region(:))/sum(back_region(:));
             self.image=self.raw_image-scaling*self.back_image;
         end
+        
+        function [] = back_noise_scaled_subtract(self)
+            %Subtracts the noise then does scaled subtraction of the
+            %background
+            
+            %load data from hard drive if necessary
+            if isempty(self.raw_image)
+                self.load_raw_image();
+            end
+            if isempty(self.back_image)
+                self.load_back_image();
+            end
+            if isempty(self.noise_image)
+                self.load_back_image();
+            end
+            
+            %Do the math
+            raw_image_adjusted=self.raw_image-self.noise_image;
+            back_image_adjusted=self.back_image-self.noise_image;
+            local_ROI=self.back_ROI;
+            raw_region=raw_image_adjusted(local_ROI.xmin:local_ROI.xmax, local_ROI.ymin:local_ROI.ymax);
+            back_region=back_image_adjusted(local_ROI.xmin:local_ROI.xmax, local_ROI.ymin:local_ROI.ymax);
+            scaling=sum(raw_region(:))/sum(back_region(:));
+            self.image=raw_image_adjusted-scaling*back_image_adjusted;
+        end
+        
+        function [] = back_noise_subtract(self)
+            %Just subtracts the noise from the raw image
+            
+            %load data from hard drive if necessary
+            if isempty(self.raw_image)
+                self.load_raw_image();
+            end
+            if isempty(self.noise_image)
+                self.load_back_image();
+            end
+            
+            %Do the math
+            self.image=self.raw_image-self.back_image;
+        end
+        
+        function [] = back_nothing(self)
+            %Just sets the image to be the raw data
+            
+            %load data from hard drive if necessary
+            if isempty(self.raw_image)
+                self.load_raw_image();
+            end
+            
+            %Do the math
+            self.image=self.raw_image;
+        end
     end
     
     %Getters and Setters
     methods
+        function [exists] = get.has_raw_image(self)
+            %Getter that figures out if the raw image file exists
+            exists=false;
+            if exist(self.raw_image_filename,'file')==2
+                exists=true;
+            end
+        end
+        
         function [exists] = get.has_back_image(self)
             %Getter that figures out if the background image file exists
             exists=false;
@@ -305,6 +416,7 @@ classdef Image < dynamicprops
             end
         end
     end
+    
     %Static Class methods
     methods (Static)
         function [image_array] = load_image_data(filename)
