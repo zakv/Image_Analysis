@@ -173,8 +173,8 @@ classdef Image < dynamicprops
         function [] = calc_image(self)
             %Loads data from the hard drive and calculates the image data
             self.load_images();
-            self.remove_backgorund();
-            self.free_RAM();
+            self.remove_background();
+            %self.free_RAM(); %keep that data around for plotting
         end
     end
     
