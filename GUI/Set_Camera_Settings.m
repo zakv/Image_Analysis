@@ -439,10 +439,14 @@ function HBinning_Callback(hObject, eventdata, handles)
 % hObject    handle to HBinning (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-val=get(hObject,'Value');
 str=get(hObject,'String');
-temp3=str2num(str);
-handles.h_binning=temp3;
+temp2=str2num(str);
+if isempty(temp2) %Can happen if someone enters something that's not a number
+    temp2=2; %Reset to 2 if someone enters something that's not a number
+end
+handles.h_binning=temp2;
+temp2=num2str(temp2);
+set(hObject,'String',temp2);
 guidata(hObject,handles);
 
 % Hints: get(hObject,'String') returns contents of HBinning as text
@@ -467,11 +471,17 @@ function VBinning_Callback(hObject, eventdata, handles)
 % hObject    handle to VBinning (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-val=get(hObject,'Value');
 str=get(hObject,'String');
-temp4=str2num(str);
-handles.v_binning=temp4;
+temp2=str2num(str);
+if isempty(temp2) %Can happen if someone enters something that's not a number
+    temp2=2; %Reset to 2 if someone enters something that's not a number
+end
+handles.v_binning=temp2;
+temp2=num2str(temp2);
+set(hObject,'String',temp2);
 guidata(hObject,handles);
+
+
 
 % Hints: get(hObject,'String') returns contents of VBinning as text
 %        str2double(get(hObject,'String')) returns contents of VBinning as a double
@@ -575,10 +585,14 @@ function VBinningAbs_Callback(hObject, eventdata, handles)
 % hObject    handle to VBinningAbs (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-val=get(hObject,'Value');
 str=get(hObject,'String');
-temp4=str2num(str);
-handles.v_binningAbs=temp4;
+temp2=str2num(str);
+if isempty(temp2) %Can happen if someone enters something that's not a number
+    temp2=2; %Reset to 2 if someone enters something that's not a number
+end
+handles.v_binningAbs=temp2;
+temp2=num2str(temp2);
+set(hObject,'String',temp2);
 guidata(hObject,handles);
 
 % Hints: get(hObject,'String') returns contents of VBinningAbs as text
@@ -603,10 +617,14 @@ function HBinningAbs_Callback(hObject, eventdata, handles)
 % hObject    handle to HBinningAbs (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-val=get(hObject,'Value');
 str=get(hObject,'String');
-temp3=str2num(str);
-handles.h_binningAbs=temp3;
+temp2=str2num(str);
+if isempty(temp2) %Can happen if someone enters something that's not a number
+    temp2=2; %Reset to 2 if someone enters something that's not a number
+end
+handles.h_binningAbs=temp2;
+temp2=num2str(temp2);
+set(hObject,'String',temp2);
 guidata(hObject,handles);
 
 % Hints: get(hObject,'String') returns contents of HBinningAbs as text
