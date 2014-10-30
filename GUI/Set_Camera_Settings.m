@@ -94,6 +94,7 @@ project_root=fullfile(mfilename('fullpath'),'..','..');
 addpath(fullfile(project_root,'Camera_Control'));
 addpath(fullfile(project_root,'Classes'));
 addpath(fullfile(project_root,'Functions'));
+addpath(fullfile(project_root,'GUI'));
 addpath(fullfile(project_root,'Scripts'));
 
 % Update handles structure
