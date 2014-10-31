@@ -15,3 +15,8 @@ Sample_Data/
 # Tilde Backups #
 #################
 *~
+
+# Data Files #
+##############
+*.mat
+*.ascii

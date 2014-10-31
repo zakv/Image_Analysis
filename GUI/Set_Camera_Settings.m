@@ -288,7 +288,7 @@ temp2=str2num(str);
 if isempty(temp2) %Can happen if someone enters something that's not a number
     temp2=1; %Reset to 1 if someone enters something that's not a number
 end
-handles.starting_index=temp2;
+handles.imacount=temp2;
 temp2=num2str(temp2);
 set(hObject,'String',temp2);
 guidata(hObject,handles);
@@ -686,7 +686,7 @@ temp2=str2num(str);
 if isempty(temp2) %Can happen if someone enters something that's not a number
     temp2=1; %Reset to 1 if someone enters something that's not a number
 end
-handles.starting_index=temp2;
+handles.imacountAbs=temp2;
 temp2=num2str(temp2);
 set(hObject,'String',temp2);
 guidata(hObject,handles);
