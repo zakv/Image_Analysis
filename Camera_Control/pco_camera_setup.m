@@ -96,7 +96,7 @@ trigger=uint16(1);
 %Timebase and times: set time and timebase for delay and exposure times
 %Timebase:
 %            0: TIMEBASE ns
-%            1: TIMEBASE µs
+%            1: TIMEBASE ï¿½s
 %            2: TIMEBASE ms
 %Delay and Exposure time: range of values depends on camera model, see descriptor 
 %                         the following values set no Delay and 10ms exposure time
@@ -107,10 +107,20 @@ exp_time=uint32(EX);
 
 % Test if library is loaded
 if (~libisloaded('PCO_CAM_SDK'))
-    % make sure the dll and h file specified below resides in your current
-    % folder
-	loadlibrary('SC2_Cam','SC2_CamExport.h','alias','PCO_CAM_SDK');
-	disp('PCO_CAM_SDK library is loaded!');
+    % Check if we want 32bit or 64bit libraries
+    arch=computer('arch');
+    if strcmp(arch(end-1:end),'64')
+        dir_name='64bit';
+    else
+        dir_name='32bit';
+    end
+    %Change directory to load library, then return to current directory
+    working_dir=pwd;
+    lib_dir=fullfile(mfilename('fullpath'),'..',dir_name);
+    cd(lib_dir);
+    loadlibrary('SC2_Cam','SC2_CamExport.h','alias','PCO_CAM_SDK');
+    cd(working_dir);
+    disp('PCO_CAM_SDK library is loaded!');
 end
 
 if((exist('glvar','var'))&& ...
