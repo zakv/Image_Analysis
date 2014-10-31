@@ -11,6 +11,7 @@ classdef Image < dynamicprops
         
         %Actual Image data
         timestamp=[]; %time at which the image was taken
+        dir=''; %directory storing this data
         raw_image_filename=''; %image with signal over background
         raw_image=[];
         back_image_filename=''; %image of background signal
@@ -37,8 +38,8 @@ classdef Image < dynamicprops
     methods
         function [self]=Image(image_name,index)
             %Initializes and image instance
-            %   image_name should be the name (with path but without
-            %   extension) of the image data.  index is a number used to
+            %   image_name should be the name (without path or filetype
+            %   extension of the image data.  index is a number used to
             %   keep track of all the different images from one series of
             %   photos.
             if nargin > 0
@@ -53,7 +54,11 @@ classdef Image < dynamicprops
         
         function [] = set_file_names(self,image_name,index)
             %Determines the file names for raw_data and back_data
-            prefix=[image_name, '_',num2str(index)];
+            
+            %Just in case image_name includes relative path
+            [path,name]=fileparts( fullfile(pwd,image_name) );
+            self.dir=path;
+            prefix=[name, '_',num2str(index)];
             self.raw_image_filename=[prefix,'_raw.ascii'];
             self.back_image_filename=[prefix,'_back.ascii'];
             self.noise_image_filename=[prefix,'_noise.ascii'];
