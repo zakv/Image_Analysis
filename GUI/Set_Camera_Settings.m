@@ -286,8 +286,9 @@ function SelectNumberOfImages_Callback(hObject, eventdata, handles)
 str=get(hObject,'String');
 temp2=str2num(str);
 if isempty(temp2) %Can happen if someone enters something that's not a number
-    temp2=1; %Reset to 1 if someone enters something that's not a number
+    temp2=handles.imacount; %Reset to previous value if someone enters something that's not a number
 end
+display(eventdata.Source);
 handles.imacount=temp2;
 temp2=num2str(temp2);
 set(hObject,'String',temp2);
@@ -442,7 +443,7 @@ function HBinning_Callback(hObject, eventdata, handles)
 str=get(hObject,'String');
 temp2=str2num(str);
 if isempty(temp2) %Can happen if someone enters something that's not a number
-    temp2=2; %Reset to 2 if someone enters something that's not a number
+    temp2=handles.h_binning; %Reset to 2 if someone enters something that's not a number
 end
 handles.h_binning=temp2;
 temp2=num2str(temp2);
@@ -474,7 +475,7 @@ function VBinning_Callback(hObject, eventdata, handles)
 str=get(hObject,'String');
 temp2=str2num(str);
 if isempty(temp2) %Can happen if someone enters something that's not a number
-    temp2=2; %Reset to 2 if someone enters something that's not a number
+    temp2=handles.v_binning; %Reset to 2 if someone enters something that's not a number
 end
 handles.v_binning=temp2;
 temp2=num2str(temp2);
@@ -1124,7 +1125,7 @@ function Starting_Index_Callback(hObject, eventdata, handles)
 str=get(hObject,'String');
 temp2=str2num(str);
 if isempty(temp2) %Can happen if someone enters something that's not a number
-    temp2=1; %Reset to 1 if someone enters something that's not a number
+    temp2=handles.starting_index; %Reset to 1 if someone enters something that's not a number
 end
 handles.starting_index=temp2;
 temp2=num2str(temp2);

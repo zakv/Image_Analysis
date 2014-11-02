@@ -9,7 +9,6 @@ images the MOT.
 To Do:
 ------
   * Add reset camera button to GUI.
-  * Improve background removal algorithm
   * Implement saving?
   * Make class that handles arrays of Image instances
   * Fix behavior for file names with dots in them
