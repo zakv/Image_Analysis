@@ -5,26 +5,38 @@ classdef Image < dynamicprops
     
     %Typical properties
     properties
-        %Region of Interest
-        ROI %will have xmin xmax, ymin, ymax attributes
         back_ROI %Region to use for scaling background signal (coordinates relative to ROI)
         
         %Actual Image data
+        image_name=''; %Name of this image series
         timestamp=[]; %time at which the image was taken
-        dir=''; %directory storing this data
-        raw_image_filename=''; %image with signal over background
-        raw_image=[];
-        back_image_filename=''; %image of background signal
-        back_image=[];
-        noise_image_filename=''; %image of noise
-        noise_image=[];
+        raw_image_filename=''; %image with signal over background (includes path)
+        raw_image=[]; %data from the raw_image file
+        back_image_filename=''; %image of background signal (includes path)
+        back_image=[]; %data from the back_image file
+        noise_image_filename=''; %image of noise (includes path)
+        noise_image=[]; %data from the noise_image file
         image=[]; %image with background removed
         
         %Other
-        self_filename %File name used to save this instance of this class
+        self_filename %File name used to save this instance of this class (includes path)
         run_config %Configuration paramters sent to Main_PCO_... during this acquisition
         index %Number indexing this image in the series of images taken
         notes=''; %String that can be used to store notes about this acquisition
+    end
+    
+    %Protected properties
+    properties (SetAccess=private)
+        ROI %Region of interest of the pictures.  Struct with xmin xmax, ymin, ymax attributes
+        dir=''; %directory storing this data
+    end
+    
+    %Hidden properties
+    properties (Hidden)
+        raw_image_string=''; %name of the raw image file without path
+        back_image_string=''; %name of the background image file without path
+        noise_image_string=''; %name of the noise file without path
+        self_string
     end
     
     %Dependent properties
@@ -53,16 +65,12 @@ classdef Image < dynamicprops
         end
         
         function [] = set_file_names(self,image_name,index)
-            %Determines the file names for raw_data and back_data
+            %Determines the file names for raw_data, back_data and
+            %noise_data
             
             %Just in case image_name includes relative path
-            [path,name]=fileparts( fullfile(pwd,image_name) );
-            self.dir=path;
-            prefix=[name, '_',num2str(index)];
-            self.raw_image_filename=[prefix,'_raw.ascii'];
-            self.back_image_filename=[prefix,'_back.ascii'];
-            self.noise_image_filename=[prefix,'_noise.ascii'];
-            self.self_filename=[prefix,'.mat'];
+            [path,image_name]=fileparts( fullfile(pwd,image_name) );
+            self.set_file_names_helper(path,image_name,index);
         end
         
         function [] = set_default_values(self)
@@ -214,6 +222,14 @@ classdef Image < dynamicprops
             self.remove_background();
             %self.free_RAM(); %keep that data around for plotting
         end
+        
+        function [image] = get_image(self)
+            %Returns the image data; calculates it if necessary
+            if isempty(self.image)
+                self.calc_image();
+            end
+            image=self.image;
+        end
     end
     
     %Memmory management
@@ -274,6 +290,23 @@ classdef Image < dynamicprops
     
     %Hidden helper subfunctions
     methods (Hidden)
+        function [] = set_file_names_helper(self,dir,image_name,index)
+            %Helper function used to set the filenames with paths
+            self.dir=dir;
+            self.image_name=image_name;
+            prefix=[image_name, '_',num2str(index)];
+            %Determine the names of the actual files
+            self.raw_image_string=[prefix,'_raw.ascii'];
+            self.back_image_string=[prefix,'_back.ascii'];
+            self.noise_image_string=[prefix,'_noise.ascii'];
+            self.self_string=[prefix,'.mat'];
+            %Set the filenames
+            self.raw_image_filename=fullfile(self.dir,self.raw_image_string);
+            self.back_image_filename=fullfile(self.dir,self.back_image_string);
+            self.noise_image_filename=fullfile(self.dir,self.noise_image_string);
+            self.self_filename=fullfile(self.dir,self.self_string);
+        end
+        
         function [] = compare_sums_helper(self,sum_direction)
             %Performs the plotting for compare_row_sums and
             %compare_col_sums
@@ -418,6 +451,77 @@ classdef Image < dynamicprops
             exists=false;
             if exist(self.noise_image_filename,'file')==2
                 exists=true;
+            end
+        end
+        
+        function [] = set_ROI(self,varargin)
+            %Use this function to change the ROI.
+            %  Give this function either an ROI struct with attributes
+            %  xmin, xmax, ymin, and ymax, or give it an array with entries
+            %  in that order, or just give it four separate arguments in
+            %  that order.
+            %  Ex: image.set_ROI(ROI); %ROI.xmax=25, etc.
+            %  Ex: image.set_ROI([xmin,xmax,ymin,ymax]);
+            %  Ex: image.set_ROI(xmin,xmax,ymin,ymax);
+            nargs=nargin-1; %Don't want to count self as an argument
+            
+            %Interpret input arguments
+            if nargs==1
+                arg=varargin{1};
+                if isstruct(arg)
+                    self.ROI=arg;
+                elseif isnumeric(arg)
+                    self.ROI.xmin=arg(1);
+                    self.ROI.xmax=arg(2);
+                    self.ROI.ymin=arg(3);
+                    self.ROI.ymax=arg(4);
+                end
+            elseif nargs==4
+                self.ROI.xmin=varargin{1};
+                self.ROI.xmax=varargin{2};
+                self.ROI.ymin=varargin{3};
+                self.ROI.ymax=varargin{4};
+            else
+                msgIdent='Image:set_ROI:InvalidFunctionCall';
+                msgString='Invalid arguments for function, see docs';
+                error(msgIdent,msgString);
+            end
+            
+            %Update data if necessary
+            if ~isempty(self.raw_image) && self.has_raw_image
+                self.load_raw_image();
+            end
+            if ~isempty(self.back_image) && self.has_back_image
+                self.load_back_image();
+            end
+            if ~isempty(self.noise_image) && self.has_noise_image
+                self.load_noise_image();
+            end
+            if ~isempty(self.image);
+                self.calc_image();
+            end
+            
+        end
+        
+        function [] = set_dir(self,dir)
+            %Use this function to set the directory containing this
+            %instance's data files
+            
+            %Update paths
+            self.set_file_names_helper(dir,self.image_name,self.index);
+            
+            %Update data if necessary
+            if ~isempty(self.raw_image) && self.has_raw_image
+                self.load_raw_image();
+            end
+            if ~isempty(self.back_image) && self.has_back_image
+                self.load_back_image();
+            end
+            if ~isempty(self.noise_image) && self.has_noise_image
+                self.load_noise_image();
+            end
+            if ~isempty(self.image);
+                self.calc_image();
             end
         end
     end

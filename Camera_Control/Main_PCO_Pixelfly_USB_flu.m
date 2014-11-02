@@ -46,6 +46,7 @@ function Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data)
 
 %unpack data from argument object
 savingname=run_config.namefile;
+saving_path=run_config.saving_path;
 imacount=run_config.imacount;
 PR=run_config.pixel_rate;
 DI=run_config.double_image;
@@ -480,6 +481,7 @@ for n=1:imacount
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if (average==0)
             pic=Image(savingname,SNumber+n-1);
+            pic.set_dir(saving_path);
             pic.timestamp=clock();
             pic.run_config=run_config;
             pic.transfer_metadata(image_instance_data);
@@ -512,6 +514,7 @@ for n=1:imacount
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if (average==0)
             pic=Image(savingname,SNumber+n-1);
+            pic.set_dir(saving_path);
             pic.timestamp=clock();
             pic.run_config=run_config;
             pic.transfer_metadata(image_instance_data);
