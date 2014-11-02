@@ -331,6 +331,11 @@ metadata_cells = get(handles.Metadata, 'data');
 metadata_object=metadata_table_to_object(metadata_cells);
 image_instance_data=combine_metadata(metadata_object,image_instance_data);
 
+%Create data directory if it does not exist
+if exist(handles.saving_path,'dir')~=7
+   mkdir(handles.saving_path) 
+end
+
 %Run the camera data acquisition software
 Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data);
 
