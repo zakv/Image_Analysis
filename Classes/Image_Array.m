@@ -30,6 +30,7 @@ classdef Image_Array < dynamicprops
             if nargin>0
                 self.image_name=image_name;
                 self.create_image_array();
+                self.aggreagate_metadata();
             end
         end
         
@@ -176,6 +177,14 @@ classdef Image_Array < dynamicprops
             %  the property does not exist, value=[] is returned.
             %  Returns exists=1 if the property exists or 0 if it doesn't.
             [value,exists]=z_get_metadata(self,name);
+        end
+        
+        function [] = set_all_metadata(self,name,value)
+            %Sets image.(name) to be value for all images in image_array
+            for j=1:self.n_images
+                image=self.image_array(j);
+                image.set_metadata(name,value);
+            end
         end
     end
     
