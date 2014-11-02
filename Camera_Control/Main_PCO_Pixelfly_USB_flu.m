@@ -1,4 +1,4 @@
-function Main_PCO_Pixelfly_USB_07102014_flu(run_config,image_instance_data)
+function Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data)
 %This function takes a lot of arguments, so it's easier to pass them as one
 %big object.  Below are the meanings of some of that object's attributes.
 %image_instance_data should be a structure whose attributes will be
