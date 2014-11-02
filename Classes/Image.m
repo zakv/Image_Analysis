@@ -99,8 +99,7 @@ classdef Image < dynamicprops
         function [] = add_metadata(self,name,value)
             %Adds a new attribute called name and assigns it to be value
             %   name should be a string
-            addprop(self,name);
-            self.(name)=value;
+            add_metadata(self,name,value);
         end
         
         function [] = set_metadata(self,name,value)
@@ -109,11 +108,7 @@ classdef Image < dynamicprops
             %   value should be the desired value of that property.
             %   This function will add the property to the instance if
             %   needed.
-            if isprop(self,name)
-                self.(name)=value;
-            else
-                self.add_metadata(name,value);
-            end
+            set_metadata(self,name,value);
         end
         
         function [] = update_metadata(self,name,value)
@@ -122,29 +117,15 @@ classdef Image < dynamicprops
             %   value should be the desired value of that property.
             %   This function errors out if the instance does not already
             %   have the given property.
-            if isprop(self,name)
-                self.(name)=value;
-            else
-                msgIdent='Image:update_metadata:Nonexistent_Property';
-                msgString='The given object does not have property %s';
-                error(msgIdent,msgString,name);
-            end
+            update_metadata(self,name,value);
         end
         
         function [] = transfer_metadata(self,object)
             %Copies all of the properties of object to this Image instance
             %   Copies the values of the object properties as well.
-            %   Overwrites any existing properties of this instance with
-            %   the new data.
-            
-            %Get a list of the object's properties
-            props=fieldnames(object);
-            j_max=length(props);
-            for j=1:j_max
-                prop=props{j};
-                %Add property, or update property value if it already exists
-                self.set_metadata(prop,object.(prop));
-            end
+            %   Overwrites any existing properties of this image instance
+            %   with the new data.
+            transfer_metadata(object,self)
         end
         
         function [ value, exists ] = get_metadata(self,name)
@@ -153,13 +134,7 @@ classdef Image < dynamicprops
             %  If the property exists, its value is returned as value.  If
             %  the property does not exist, value=[] is returned.
             %  Returns exists=1 if the property exists or 0 if it doesn't.
-            temp=self.findprop(name);
-            exists=0;
-            value=[];
-            if temp.isvalid()
-                exists=1;
-                value=self.(name);
-            end
+            [value,exists]=get_metadata(self,name);
         end
     end
     
