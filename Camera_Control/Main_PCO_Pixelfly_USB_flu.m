@@ -485,7 +485,7 @@ for n=1:imacount
             pic.timestamp=clock();
             pic.run_config=run_config;
             pic.transfer_metadata(image_instance_data);
-            save_object(pic,pic.self_filename);
+            pic.save();
             dlmwrite(pic.raw_image_filename, result_image1','delimiter', '\t');
             dlmwrite(pic.back_image_filename, result_image2','delimiter', '\t');
             dlmwrite(pic.noise_image_filename, result_image3','delimiter', '\t');
@@ -518,7 +518,7 @@ for n=1:imacount
             pic.timestamp=clock();
             pic.run_config=run_config;
             pic.transfer_metadata(image_instance_data);
-            save_object(pic,pic.self_filename);
+            pic.save();
             dlmwrite(pic.raw_image_filename, result_image1','delimiter', '\t');
         end
         %total_image1=double(total_image1) + double(result_image1');

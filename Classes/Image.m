@@ -286,6 +286,11 @@ classdef Image < dynamicprops
             self.unload_back_image();
             self.unload_noise_image();
         end
+        
+        function [] = save(self)
+            %saves the image instance to the hard drive
+           save_object(self,self.self_filename); 
+        end
     end
     
     %Hidden helper subfunctions
