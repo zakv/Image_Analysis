@@ -49,7 +49,7 @@ classdef Image < dynamicprops
     %Initialization
     methods
         function [self]=Image(image_name,index)
-            %Initializes and image instance
+            %Initializes an image instance
             %   image_name should be the name (without path or filetype
             %   extension of the image data.  index is a number used to
             %   keep track of all the different images from one series of
@@ -222,14 +222,6 @@ classdef Image < dynamicprops
             self.remove_background();
             %self.free_RAM(); %keep that data around for plotting
         end
-        
-        function [image] = get_image(self)
-            %Returns the image data; calculates it if necessary
-            if isempty(self.image)
-                self.calc_image();
-            end
-            image=self.image;
-        end
     end
     
     %Memmory management
@@ -299,7 +291,7 @@ classdef Image < dynamicprops
             %Helper function used to set the filenames with paths
             self.dir=dir;
             self.image_name=image_name;
-            prefix=[image_name, '_',num2str(index)];
+            prefix=Image.get_prefix(image_name,index);
             %Determine the names of the actual files
             self.raw_image_string=[prefix,'_raw.ascii'];
             self.back_image_string=[prefix,'_back.ascii'];
@@ -544,6 +536,14 @@ classdef Image < dynamicprops
             %Returns an array with the entire image
             full_noise_image=Image.load_image_data(self.raw_image_filename);
         end
+        
+        function [image] = get.image(self)
+            %Returns the image data; calculates it if necessary
+            if isempty(self.image)
+                self.calc_image();
+            end
+            image=self.image;
+        end
     end
     
     %Static Class methods
@@ -562,6 +562,11 @@ classdef Image < dynamicprops
             %  linestyle, color, etc.
             rows=sum(array,sum_direction);
             plot(rows,varargin{:});
+        end
+        
+        function [prefix] = get_prefix(image_name,index)
+            %Returns the prefix used when calculating filenames
+            prefix=[image_name, '_',num2str(index)];
         end
     end
     
