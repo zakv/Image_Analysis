@@ -22,7 +22,7 @@ function varargout = Set_Camera_Settings(varargin)
 
 % Edit the above text to modify the response to help Set_Camera_Settings
 
-% Last Modified by GUIDE v2.5 01-Nov-2014 22:15:05
+% Last Modified by GUIDE v2.5 02-Nov-2014 01:33:18
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1176,4 +1176,17 @@ function Saving_Path_CreateFcn(hObject, eventdata, handles)
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in Reset_Camera.
+function Reset_Camera_Callback(hObject, eventdata, handles)
+% hObject    handle to Reset_Camera (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if libisloaded('PCO_CAM_SDK')
+    %[errorCode,out_ptr] = calllib('PCO_CAM_SDK', 'PCO_ArmCamera', out_ptr);
+    [errorCode] = calllib('PCO_CAM_SDK', 'PCO_CloseCamera', out_ptr);
+    unloadlibrary('PCO_CAM_SDK');
+    disp('PCO_CAM_SDK unloadlibrary done');
 end
