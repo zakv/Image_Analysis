@@ -9,11 +9,7 @@ images the MOT.
 To Do:
 ------
   * Add reset camera button to GUI.
-  * Implement saving?
   * Make class that handles arrays of Image instances
   * Fix behavior for file names with dots in them
-  * add save path (save to F:\ by default)
-  * add get_full_image method to return the entire array of raw/back/noise data
-  * Changing ROI should make the image instance reload data
   * add rename method to image.m
   * Add save functionality to Image class (should automatically free ram first)
