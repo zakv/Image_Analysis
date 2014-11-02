@@ -27,7 +27,7 @@ classdef Image < dynamicprops
     
     %Protected properties
     properties (SetAccess=private)
-        ROI %Region of interest of the pictures.  Struct with xmin xmax, ymin, ymax attributes
+        ROI %Region of interest of the pictures.  Struct with row_min row_max, col_min, col_max attributes
         dir=''; %directory storing this data
     end
     
@@ -78,19 +78,19 @@ classdef Image < dynamicprops
             %initialized.
             
             %Set Region of Interest
-            self.ROI.xmin=71; %51;
-            self.ROI.xmax=260; %250;
-            self.ROI.ymin=101;
-            self.ROI.ymax=270;
+            self.ROI.row_min=71; %51;
+            self.ROI.row_max=260; %250;
+            self.ROI.col_min=101;
+            self.ROI.col_max=270;
             
             %Set background Region of Interest
             %  Coordinates are relative to the ROI, not the original image.
             %  This region is used to figure out how to scale the
             %  background before subtracting it from raw_data.
-            self.back_ROI.xmin=131;
-            self.back_ROI.xmax=180;
-            self.back_ROI.ymin=110;
-            self.back_ROI.ymax=140;
+            self.back_ROI.row_min=131;
+            self.back_ROI.row_max=180;
+            self.back_ROI.col_min=110;
+            self.back_ROI.col_max=140;
         end
     end
     
@@ -169,7 +169,7 @@ classdef Image < dynamicprops
             %Returns an array cointaining the region of interest of the
             %given array
             local_ROI=self.ROI;
-            ROI_image_array=image_array(local_ROI.xmin:local_ROI.xmax, local_ROI.ymin:local_ROI.ymax);
+            ROI_image_array=image_array(local_ROI.row_min:local_ROI.row_max, local_ROI.col_min:local_ROI.col_max);
         end
         
         function [] = remove_background(self)
@@ -369,8 +369,8 @@ classdef Image < dynamicprops
             
             %Do the math
             local_ROI=self.back_ROI;
-            raw_region=self.raw_image(local_ROI.xmin:local_ROI.xmax, local_ROI.ymin:local_ROI.ymax);
-            back_region=self.back_image(local_ROI.xmin:local_ROI.xmax, local_ROI.ymin:local_ROI.ymax);
+            raw_region=self.raw_image(local_ROI.row_min:local_ROI.row_max, local_ROI.col_min:local_ROI.col_max);
+            back_region=self.back_image(local_ROI.row_min:local_ROI.row_max, local_ROI.col_min:local_ROI.col_max);
             scaling=sum(raw_region(:))/sum(back_region(:));
             self.image=self.raw_image-scaling*self.back_image;
         end
@@ -394,8 +394,8 @@ classdef Image < dynamicprops
             raw_image_adjusted=self.raw_image-self.noise_image;
             back_image_adjusted=self.back_image-self.noise_image;
             local_ROI=self.back_ROI;
-            raw_region=raw_image_adjusted(local_ROI.xmin:local_ROI.xmax, local_ROI.ymin:local_ROI.ymax);
-            back_region=back_image_adjusted(local_ROI.xmin:local_ROI.xmax, local_ROI.ymin:local_ROI.ymax);
+            raw_region=raw_image_adjusted(local_ROI.row_min:local_ROI.row_max, local_ROI.col_min:local_ROI.col_max);
+            back_region=back_image_adjusted(local_ROI.row_min:local_ROI.row_max, local_ROI.col_min:local_ROI.col_max);
             scaling=sum(raw_region(:))/sum(back_region(:));
             self.image=raw_image_adjusted-scaling*back_image_adjusted;
         end
@@ -457,12 +457,12 @@ classdef Image < dynamicprops
         function [] = set_ROI(self,varargin)
             %Use this function to change the ROI.
             %  Give this function either an ROI struct with attributes
-            %  xmin, xmax, ymin, and ymax, or give it an array with entries
+            %  row_min, row_max, col_min, and col_max, or give it an array with entries
             %  in that order, or just give it four separate arguments in
             %  that order.
-            %  Ex: image.set_ROI(ROI); %ROI.xmax=25, etc.
-            %  Ex: image.set_ROI([xmin,xmax,ymin,ymax]);
-            %  Ex: image.set_ROI(xmin,xmax,ymin,ymax);
+            %  Ex: image.set_ROI(ROI); %ROI.row_max=25, etc.
+            %  Ex: image.set_ROI([row_min,row_max,col_min,col_max]);
+            %  Ex: image.set_ROI(row_min,row_max,col_min,col_max);
             nargs=nargin-1; %Don't want to count self as an argument
             
             %Interpret input arguments
@@ -471,16 +471,16 @@ classdef Image < dynamicprops
                 if isstruct(arg)
                     self.ROI=arg;
                 elseif isnumeric(arg)
-                    self.ROI.xmin=arg(1);
-                    self.ROI.xmax=arg(2);
-                    self.ROI.ymin=arg(3);
-                    self.ROI.ymax=arg(4);
+                    self.ROI.row_min=arg(1);
+                    self.ROI.row_max=arg(2);
+                    self.ROI.col_min=arg(3);
+                    self.ROI.col_max=arg(4);
                 end
             elseif nargs==4
-                self.ROI.xmin=varargin{1};
-                self.ROI.xmax=varargin{2};
-                self.ROI.ymin=varargin{3};
-                self.ROI.ymax=varargin{4};
+                self.ROI.row_min=varargin{1};
+                self.ROI.row_max=varargin{2};
+                self.ROI.col_min=varargin{3};
+                self.ROI.col_max=varargin{4};
             else
                 msgIdent='Image:set_ROI:InvalidFunctionCall';
                 msgString='Invalid arguments for function, see docs';
