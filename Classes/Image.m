@@ -529,6 +529,21 @@ classdef Image < dynamicprops
                 self.calc_image();
             end
         end
+        
+        function [full_raw_image] = get_full_raw_image(self)
+            %Returns an array with the entire image
+            full_raw_image=Image.load_image_data(self.raw_image_filename);
+        end
+        
+        function [full_back_image] = get_full_back_image(self)
+            %Returns an array with the entire image
+            full_back_image=Image.load_image_data(self.raw_image_filename);
+        end
+        
+        function [full_noise_image] = get_full_noise_image(self)
+            %Returns an array with the entire image
+            full_noise_image=Image.load_image_data(self.raw_image_filename);
+        end
     end
     
     %Static Class methods
