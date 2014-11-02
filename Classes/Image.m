@@ -69,7 +69,7 @@ classdef Image < dynamicprops
             %noise_data
             
             %Just in case image_name includes relative path
-            [path,image_name]=zfileparts( fullfile(pwd,image_name) );
+            [path,image_name]=z_fileparts( fullfile(pwd,image_name) );
             self.set_file_names_helper(path,image_name,index);
         end
         
@@ -99,7 +99,7 @@ classdef Image < dynamicprops
         function [] = add_metadata(self,name,value)
             %Adds a new attribute called name and assigns it to be value
             %   name should be a string
-            add_metadata(self,name,value);
+            z_add_metadata(self,name,value);
         end
         
         function [] = set_metadata(self,name,value)
@@ -108,7 +108,7 @@ classdef Image < dynamicprops
             %   value should be the desired value of that property.
             %   This function will add the property to the instance if
             %   needed.
-            set_metadata(self,name,value);
+            z_set_metadata(self,name,value);
         end
         
         function [] = update_metadata(self,name,value)
@@ -117,7 +117,7 @@ classdef Image < dynamicprops
             %   value should be the desired value of that property.
             %   This function errors out if the instance does not already
             %   have the given property.
-            update_metadata(self,name,value);
+            z_update_metadata(self,name,value);
         end
         
         function [] = transfer_metadata(self,object)
@@ -125,7 +125,7 @@ classdef Image < dynamicprops
             %   Copies the values of the object properties as well.
             %   Overwrites any existing properties of this image instance
             %   with the new data.
-            transfer_metadata(object,self)
+            z_transfer_metadata(object,self)
         end
         
         function [ value, exists ] = get_metadata(self,name)
@@ -134,7 +134,7 @@ classdef Image < dynamicprops
             %  If the property exists, its value is returned as value.  If
             %  the property does not exist, value=[] is returned.
             %  Returns exists=1 if the property exists or 0 if it doesn't.
-            [value,exists]=get_metadata(self,name);
+            [value,exists]=z_get_metadata(self,name);
         end
     end
     

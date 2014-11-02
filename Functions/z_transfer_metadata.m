@@ -1,4 +1,4 @@
-function [] = transfer_metadata(object1,object2)
+function [] = z_transfer_metadata(object1,object2)
 %Copies all of the properties of object1 to object2
 %   Copies the values of the object1 properties as well. Overwrites any
 %   existing properties of object2 with the new data.

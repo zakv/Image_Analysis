@@ -1,4 +1,4 @@
-function [pathstr,name,ext] = zfileparts(file)
+function [pathstr,name,ext] = z_fileparts(file)
 %Replaces Matlab's fileparts and works for paths that have dots in their
 %names
 %  For now it is identical to fileparts because I don't see why this wasn't

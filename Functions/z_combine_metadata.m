@@ -1,4 +1,4 @@
-function [object3] = combine_metadata(object1,object2)
+function [object3] = z_combine_metadata(object1,object2)
 %Copies all of the properties of object1 to object2 and returns it as
 %object3.  If both objects have the same property, object1's data is used.
 

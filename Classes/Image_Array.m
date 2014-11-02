@@ -59,6 +59,62 @@ classdef Image_Array < dynamicprops
             end
             self.image_array=image_array;
         end
+        
+        function [] = aggregate_metadata(self)
+            %If any properties are the same for all images in
+            %self.image_array, this method adds them as properties of this
+            %image_array instance.  Does not work for properties that are
+            %structs
+            if ~isempty(self.image_array) %Only do this if we have some images
+                image=self.image_array(1);
+                props=fieldnames(image);
+                
+                %Remove a few things that we don't want to include
+                j1_max=length(props);
+                removal_indices=[];
+                for j1=1:j1_max
+                    prop=props{j1};
+                    if strcmp(prop,'image')
+                        removal_indices(end+1)=j1; %#ok<AGROW>
+                    elseif strcmp(prop,'image_name')
+                        removal_indices(end+1)=j1; %#ok<AGROW>
+                    end
+                end
+                props(removal_indices)=[]; %deletes those entries
+                
+                %now iterate over the rest of the images and keep track of
+                %which properties are shared between all of them
+                for j1=2:self.n_images
+                    next_image=self.image_array(j1);
+                    next_props=fieldnames(next_image);
+                    %Drop any properties that only one image has.
+                    common_props=intersect(props,next_props);
+                    %Iterate over properties, only keep them if both images
+                    %have the same value for that property
+                    props={};
+                    j2_max=length(common_props);
+                    for j2=1:j2_max
+                        prop=common_props{j2};
+                        %Matlab can't compare structs, so we'll have to
+                        %drop them
+                        if ~isstruct(image.(prop))
+                            if  image.(prop)==next_image.(prop)
+                                props{end+1}=prop; %#ok<AGROW>
+                            end
+                        end
+                    end
+                end
+                
+                %Now have a list of properties that are shared between all
+                %images and have the same values for all images.
+                %add props to this image_array instance
+                j1_max=length(props);
+                for j1=1:j1_max
+                    prop=props{j1};
+                    self.set_metadata(prop,image.(prop));
+                end
+            end
+        end
     end
     
     %Data Manipulation/Calculation/Plotting
@@ -75,6 +131,51 @@ classdef Image_Array < dynamicprops
                 end
                 self.image=total/self.n_images();
             end
+        end
+    end
+    
+    %Metadata Manipulation (mostly coppied from Image.m)
+    methods
+        function [] = add_metadata(self,name,value)
+            %Adds a new attribute called name and assigns it to be value
+            %   name should be a string
+            z_add_metadata(self,name,value);
+        end
+        
+        function [] = set_metadata(self,name,value)
+            %Sets the value of the given metadata
+            %   name should be a string giving the name of the property and
+            %   value should be the desired value of that property.
+            %   This function will add the property to the instance if
+            %   needed.
+            z_set_metadata(self,name,value);
+        end
+        
+        function [] = update_metadata(self,name,value)
+            %Updates the value of the given metadata
+            %   name should be a string giving the name of the property and
+            %   value should be the desired value of that property.
+            %   This function errors out if the instance does not already
+            %   have the given property.
+            z_update_metadata(self,name,value);
+        end
+        
+        function [] = transfer_metadata(self,object)
+            %Copies all of the properties of object to this Image_Array
+            %instance
+            %   Copies the values of the object properties as well.
+            %   Overwrites any existing properties of this Image_Array
+            %   instance with the new data.
+            z_transfer_metadata(object,self)
+        end
+        
+        function [ value, exists ] = get_metadata(self,name)
+            %Checks to see if the instance has attribute name and returns
+            %its value
+            %  If the property exists, its value is returned as value.  If
+            %  the property does not exist, value=[] is returned.
+            %  Returns exists=1 if the property exists or 0 if it doesn't.
+            [value,exists]=z_get_metadata(self,name);
         end
     end
     
