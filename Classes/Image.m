@@ -69,7 +69,7 @@ classdef Image < dynamicprops
             %noise_data
             
             %Just in case image_name includes relative path
-            [path,image_name]=fileparts( fullfile(pwd,image_name) );
+            [path,image_name]=zfileparts( fullfile(pwd,image_name) );
             self.set_file_names_helper(path,image_name,index);
         end
         

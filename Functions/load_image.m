@@ -8,7 +8,7 @@ function [ pic ] = load_image( file_name )
 %   extension is optional
 
 pic=load_object(file_name);
-pic.dir=fileparts( fullfile(pwd,file_name) );
+pic.dir=zfileparts( fullfile(pwd,file_name) );
 
 end
 
