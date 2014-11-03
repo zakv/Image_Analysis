@@ -22,7 +22,7 @@ function varargout = Set_Camera_Settings(varargin)
 
 % Edit the above text to modify the response to help Set_Camera_Settings
 
-% Last Modified by GUIDE v2.5 29-Oct-2014 21:28:14
+% Last Modified by GUIDE v2.5 02-Nov-2014 01:33:18
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -86,6 +86,9 @@ handles.averageAbs=0;
 handles.starting_index=1;
 handles.notes='';
 handles.metadata=cell(0,2);
+temp=clock;
+handles.saving_path=sprintf('F:\\%4d_%02d_%02d',temp(1:3));
+set(handles.Saving_Path,'String',handles.saving_path);
 % Choose default command line output for Set_Camera_Settings
 handles.output = hObject;
 
@@ -286,8 +289,9 @@ function SelectNumberOfImages_Callback(hObject, eventdata, handles)
 str=get(hObject,'String');
 temp2=str2num(str);
 if isempty(temp2) %Can happen if someone enters something that's not a number
-    temp2=1; %Reset to 1 if someone enters something that's not a number
+    temp2=handles.imacount; %Reset to previous value if someone enters something that's not a number
 end
+display(eventdata.Source);
 handles.imacount=temp2;
 temp2=num2str(temp2);
 set(hObject,'String',temp2);
@@ -326,6 +330,11 @@ image_instance_data.notes=handles.notes;
 metadata_cells = get(handles.Metadata, 'data');
 metadata_object=metadata_table_to_object(metadata_cells);
 image_instance_data=combine_metadata(metadata_object,image_instance_data);
+
+%Create data directory if it does not exist
+if exist(handles.saving_path,'dir')~=7
+   mkdir(handles.saving_path) 
+end
 
 %Run the camera data acquisition software
 Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data);
@@ -442,7 +451,7 @@ function HBinning_Callback(hObject, eventdata, handles)
 str=get(hObject,'String');
 temp2=str2num(str);
 if isempty(temp2) %Can happen if someone enters something that's not a number
-    temp2=2; %Reset to 2 if someone enters something that's not a number
+    temp2=handles.h_binning; %Reset to 2 if someone enters something that's not a number
 end
 handles.h_binning=temp2;
 temp2=num2str(temp2);
@@ -474,7 +483,7 @@ function VBinning_Callback(hObject, eventdata, handles)
 str=get(hObject,'String');
 temp2=str2num(str);
 if isempty(temp2) %Can happen if someone enters something that's not a number
-    temp2=2; %Reset to 2 if someone enters something that's not a number
+    temp2=handles.v_binning; %Reset to 2 if someone enters something that's not a number
 end
 handles.v_binning=temp2;
 temp2=num2str(temp2);
@@ -1124,7 +1133,7 @@ function Starting_Index_Callback(hObject, eventdata, handles)
 str=get(hObject,'String');
 temp2=str2num(str);
 if isempty(temp2) %Can happen if someone enters something that's not a number
-    temp2=1; %Reset to 1 if someone enters something that's not a number
+    temp2=handles.starting_index; %Reset to 1 if someone enters something that's not a number
 end
 handles.starting_index=temp2;
 temp2=num2str(temp2);
@@ -1141,4 +1150,43 @@ function Starting_Index_CreateFcn(hObject, eventdata, handles)
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
+end
+
+
+
+function Saving_Path_Callback(hObject, eventdata, handles)
+% hObject    handle to Saving_Path (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of Saving_Path as text
+%        str2double(get(hObject,'String')) returns contents of Saving_Path as a double
+saving_path=get(hObject,'String');
+handles.saving_path=saving_path;
+guidata(hObject,handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function Saving_Path_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to Saving_Path (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in Reset_Camera.
+function Reset_Camera_Callback(hObject, eventdata, handles)
+% hObject    handle to Reset_Camera (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if libisloaded('PCO_CAM_SDK')
+    %[errorCode,out_ptr] = calllib('PCO_CAM_SDK', 'PCO_ArmCamera', out_ptr);
+    [errorCode] = calllib('PCO_CAM_SDK', 'PCO_CloseCamera', out_ptr);
+    unloadlibrary('PCO_CAM_SDK');
+    disp('PCO_CAM_SDK unloadlibrary done');
 end

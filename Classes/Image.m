@@ -5,26 +5,38 @@ classdef Image < dynamicprops
     
     %Typical properties
     properties
-        %Region of Interest
-        ROI %will have xmin xmax, ymin, ymax attributes
         back_ROI %Region to use for scaling background signal (coordinates relative to ROI)
         
         %Actual Image data
+        image_name=''; %Name of this image series
         timestamp=[]; %time at which the image was taken
-        dir=''; %directory storing this data
-        raw_image_filename=''; %image with signal over background
-        raw_image=[];
-        back_image_filename=''; %image of background signal
-        back_image=[];
-        noise_image_filename=''; %image of noise
-        noise_image=[];
+        raw_image_filename=''; %image with signal over background (includes path)
+        raw_image=[]; %data from the raw_image file
+        back_image_filename=''; %image of background signal (includes path)
+        back_image=[]; %data from the back_image file
+        noise_image_filename=''; %image of noise (includes path)
+        noise_image=[]; %data from the noise_image file
         image=[]; %image with background removed
         
         %Other
-        self_filename %File name used to save this instance of this class
+        self_filename %File name used to save this instance of this class (includes path)
         run_config %Configuration paramters sent to Main_PCO_... during this acquisition
         index %Number indexing this image in the series of images taken
         notes=''; %String that can be used to store notes about this acquisition
+    end
+    
+    %Protected properties
+    properties (SetAccess=private)
+        ROI %Region of interest of the pictures.  Struct with row_min row_max, col_min, col_max attributes
+        dir=''; %directory storing this data
+    end
+    
+    %Hidden properties
+    properties (Hidden)
+        raw_image_string=''; %name of the raw image file without path
+        back_image_string=''; %name of the background image file without path
+        noise_image_string=''; %name of the noise file without path
+        self_string
     end
     
     %Dependent properties
@@ -37,7 +49,7 @@ classdef Image < dynamicprops
     %Initialization
     methods
         function [self]=Image(image_name,index)
-            %Initializes and image instance
+            %Initializes an image instance
             %   image_name should be the name (without path or filetype
             %   extension of the image data.  index is a number used to
             %   keep track of all the different images from one series of
@@ -53,16 +65,12 @@ classdef Image < dynamicprops
         end
         
         function [] = set_file_names(self,image_name,index)
-            %Determines the file names for raw_data and back_data
+            %Determines the file names for raw_data, back_data and
+            %noise_data
             
             %Just in case image_name includes relative path
-            [path,name]=fileparts( fullfile(pwd,image_name) );
-            self.dir=path;
-            prefix=[name, '_',num2str(index)];
-            self.raw_image_filename=[prefix,'_raw.ascii'];
-            self.back_image_filename=[prefix,'_back.ascii'];
-            self.noise_image_filename=[prefix,'_noise.ascii'];
-            self.self_filename=[prefix,'.mat'];
+            [path,image_name]=z_fileparts( fullfile(pwd,image_name) );
+            self.set_file_names_helper(path,image_name,index);
         end
         
         function [] = set_default_values(self)
@@ -70,19 +78,19 @@ classdef Image < dynamicprops
             %initialized.
             
             %Set Region of Interest
-            self.ROI.xmin=71; %51;
-            self.ROI.xmax=260; %250;
-            self.ROI.ymin=101;
-            self.ROI.ymax=270;
+            self.ROI.row_min=71; %51;
+            self.ROI.row_max=260; %250;
+            self.ROI.col_min=101;
+            self.ROI.col_max=270;
             
             %Set background Region of Interest
             %  Coordinates are relative to the ROI, not the original image.
             %  This region is used to figure out how to scale the
             %  background before subtracting it from raw_data.
-            self.back_ROI.xmin=131;
-            self.back_ROI.xmax=180;
-            self.back_ROI.ymin=110;
-            self.back_ROI.ymax=140;
+            self.back_ROI.row_min=131;
+            self.back_ROI.row_max=180;
+            self.back_ROI.col_min=110;
+            self.back_ROI.col_max=140;
         end
     end
     
@@ -91,8 +99,7 @@ classdef Image < dynamicprops
         function [] = add_metadata(self,name,value)
             %Adds a new attribute called name and assigns it to be value
             %   name should be a string
-            addprop(self,name);
-            self.(name)=value;
+            z_add_metadata(self,name,value);
         end
         
         function [] = set_metadata(self,name,value)
@@ -101,11 +108,7 @@ classdef Image < dynamicprops
             %   value should be the desired value of that property.
             %   This function will add the property to the instance if
             %   needed.
-            if isprop(self,name)
-                self.(name)=value;
-            else
-                self.add_metadata(name,value);
-            end
+            z_set_metadata(self,name,value);
         end
         
         function [] = update_metadata(self,name,value)
@@ -114,29 +117,15 @@ classdef Image < dynamicprops
             %   value should be the desired value of that property.
             %   This function errors out if the instance does not already
             %   have the given property.
-            if isprop(self,name)
-                self.(name)=value;
-            else
-                msgIdent='Image:update_metadata:Nonexistent_Property';
-                msgString='The given object does not have property %s';
-                error(msgIdent,msgString,name);
-            end
+            z_update_metadata(self,name,value);
         end
         
         function [] = transfer_metadata(self,object)
             %Copies all of the properties of object to this Image instance
             %   Copies the values of the object properties as well.
-            %   Overwrites any existing properties of this instance with
-            %   the new data.
-            
-            %Get a list of the object's properties
-            props=fieldnames(object);
-            j_max=length(props);
-            for j=1:j_max
-                prop=props{j};
-                %Add property, or update property value if it already exists
-                self.set_metadata(prop,object.(prop));
-            end
+            %   Overwrites any existing properties of this image instance
+            %   with the new data.
+            z_transfer_metadata(object,self)
         end
         
         function [ value, exists ] = get_metadata(self,name)
@@ -145,13 +134,7 @@ classdef Image < dynamicprops
             %  If the property exists, its value is returned as value.  If
             %  the property does not exist, value=[] is returned.
             %  Returns exists=1 if the property exists or 0 if it doesn't.
-            temp=self.findprop(name);
-            exists=0;
-            value=[];
-            if temp.isvalid()
-                exists=1;
-                value=self.(name);
-            end
+            [value,exists]=z_get_metadata(self,name);
         end
     end
     
@@ -161,7 +144,7 @@ classdef Image < dynamicprops
             %Returns an array cointaining the region of interest of the
             %given array
             local_ROI=self.ROI;
-            ROI_image_array=image_array(local_ROI.xmin:local_ROI.xmax, local_ROI.ymin:local_ROI.ymax);
+            ROI_image_array=image_array(local_ROI.row_min:local_ROI.row_max, local_ROI.col_min:local_ROI.col_max);
         end
         
         function [] = remove_background(self)
@@ -270,10 +253,32 @@ classdef Image < dynamicprops
             self.unload_back_image();
             self.unload_noise_image();
         end
+        
+        function [] = save(self)
+            %saves the image instance to the hard drive
+           save_object(self,self.self_filename); 
+        end
     end
     
     %Hidden helper subfunctions
     methods (Hidden)
+        function [] = set_file_names_helper(self,dir,image_name,index)
+            %Helper function used to set the filenames with paths
+            self.dir=dir;
+            self.image_name=image_name;
+            prefix=Image.get_prefix(image_name,index);
+            %Determine the names of the actual files
+            self.raw_image_string=[prefix,'_raw.ascii'];
+            self.back_image_string=[prefix,'_back.ascii'];
+            self.noise_image_string=[prefix,'_noise.ascii'];
+            self.self_string=[prefix,'.mat'];
+            %Set the filenames
+            self.raw_image_filename=fullfile(self.dir,self.raw_image_string);
+            self.back_image_filename=fullfile(self.dir,self.back_image_string);
+            self.noise_image_filename=fullfile(self.dir,self.noise_image_string);
+            self.self_filename=fullfile(self.dir,self.self_string);
+        end
+        
         function [] = compare_sums_helper(self,sum_direction)
             %Performs the plotting for compare_row_sums and
             %compare_col_sums
@@ -336,8 +341,8 @@ classdef Image < dynamicprops
             
             %Do the math
             local_ROI=self.back_ROI;
-            raw_region=self.raw_image(local_ROI.xmin:local_ROI.xmax, local_ROI.ymin:local_ROI.ymax);
-            back_region=self.back_image(local_ROI.xmin:local_ROI.xmax, local_ROI.ymin:local_ROI.ymax);
+            raw_region=self.raw_image(local_ROI.row_min:local_ROI.row_max, local_ROI.col_min:local_ROI.col_max);
+            back_region=self.back_image(local_ROI.row_min:local_ROI.row_max, local_ROI.col_min:local_ROI.col_max);
             scaling=sum(raw_region(:))/sum(back_region(:));
             self.image=self.raw_image-scaling*self.back_image;
         end
@@ -361,8 +366,8 @@ classdef Image < dynamicprops
             raw_image_adjusted=self.raw_image-self.noise_image;
             back_image_adjusted=self.back_image-self.noise_image;
             local_ROI=self.back_ROI;
-            raw_region=raw_image_adjusted(local_ROI.xmin:local_ROI.xmax, local_ROI.ymin:local_ROI.ymax);
-            back_region=back_image_adjusted(local_ROI.xmin:local_ROI.xmax, local_ROI.ymin:local_ROI.ymax);
+            raw_region=raw_image_adjusted(local_ROI.row_min:local_ROI.row_max, local_ROI.col_min:local_ROI.col_max);
+            back_region=back_image_adjusted(local_ROI.row_min:local_ROI.row_max, local_ROI.col_min:local_ROI.col_max);
             scaling=sum(raw_region(:))/sum(back_region(:));
             self.image=raw_image_adjusted-scaling*back_image_adjusted;
         end
@@ -420,6 +425,100 @@ classdef Image < dynamicprops
                 exists=true;
             end
         end
+        
+        function [] = set_ROI(self,varargin)
+            %Use this function to change the ROI.
+            %  Give this function either an ROI struct with attributes
+            %  row_min, row_max, col_min, and col_max, or give it an array with entries
+            %  in that order, or just give it four separate arguments in
+            %  that order.
+            %  Ex: image.set_ROI(ROI); %ROI.row_max=25, etc.
+            %  Ex: image.set_ROI([row_min,row_max,col_min,col_max]);
+            %  Ex: image.set_ROI(row_min,row_max,col_min,col_max);
+            nargs=nargin-1; %Don't want to count self as an argument
+            
+            %Interpret input arguments
+            if nargs==1
+                arg=varargin{1};
+                if isstruct(arg)
+                    self.ROI=arg;
+                elseif isnumeric(arg)
+                    self.ROI.row_min=arg(1);
+                    self.ROI.row_max=arg(2);
+                    self.ROI.col_min=arg(3);
+                    self.ROI.col_max=arg(4);
+                end
+            elseif nargs==4
+                self.ROI.row_min=varargin{1};
+                self.ROI.row_max=varargin{2};
+                self.ROI.col_min=varargin{3};
+                self.ROI.col_max=varargin{4};
+            else
+                msgIdent='Image:set_ROI:InvalidFunctionCall';
+                msgString='Invalid arguments for function, see docs';
+                error(msgIdent,msgString);
+            end
+            
+            %Update data if necessary
+            if ~isempty(self.raw_image) && self.has_raw_image
+                self.load_raw_image();
+            end
+            if ~isempty(self.back_image) && self.has_back_image
+                self.load_back_image();
+            end
+            if ~isempty(self.noise_image) && self.has_noise_image
+                self.load_noise_image();
+            end
+            if ~isempty(self.image);
+                self.calc_image();
+            end
+            
+        end
+        
+        function [] = set_dir(self,dir)
+            %Use this function to set the directory containing this
+            %instance's data files
+            
+            %Update paths
+            self.set_file_names_helper(dir,self.image_name,self.index);
+            
+            %Update data if necessary
+            if ~isempty(self.raw_image) && self.has_raw_image
+                self.load_raw_image();
+            end
+            if ~isempty(self.back_image) && self.has_back_image
+                self.load_back_image();
+            end
+            if ~isempty(self.noise_image) && self.has_noise_image
+                self.load_noise_image();
+            end
+            if ~isempty(self.image);
+                self.calc_image();
+            end
+        end
+        
+        function [full_raw_image] = get_full_raw_image(self)
+            %Returns an array with the entire image
+            full_raw_image=Image.load_image_data(self.raw_image_filename);
+        end
+        
+        function [full_back_image] = get_full_back_image(self)
+            %Returns an array with the entire image
+            full_back_image=Image.load_image_data(self.raw_image_filename);
+        end
+        
+        function [full_noise_image] = get_full_noise_image(self)
+            %Returns an array with the entire image
+            full_noise_image=Image.load_image_data(self.raw_image_filename);
+        end
+        
+        function [image] = get.image(self)
+            %Returns the image data; calculates it if necessary
+            if isempty(self.image)
+                self.calc_image();
+            end
+            image=self.image;
+        end
     end
     
     %Static Class methods
@@ -438,6 +537,11 @@ classdef Image < dynamicprops
             %  linestyle, color, etc.
             rows=sum(array,sum_direction);
             plot(rows,varargin{:});
+        end
+        
+        function [prefix] = get_prefix(image_name,index)
+            %Returns the prefix used when calculating filenames
+            prefix=[image_name, '_',num2str(index)];
         end
     end
     

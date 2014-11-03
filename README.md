@@ -8,6 +8,5 @@ images the MOT.
 
 To Do:
 ------
-  * Improve background removal algorithm
-  * Implement saving?
   * Make class that handles arrays of Image instances
+  * Fix behavior for file names with dots in them

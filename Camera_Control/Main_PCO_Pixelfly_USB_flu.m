@@ -1,4 +1,4 @@
-function Main_PCO_Pixelfly_USB_07102014_flu(run_config,image_instance_data)
+function Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data)
 %This function takes a lot of arguments, so it's easier to pass them as one
 %big object.  Below are the meanings of some of that object's attributes.
 %image_instance_data should be a structure whose attributes will be
@@ -46,6 +46,7 @@ function Main_PCO_Pixelfly_USB_07102014_flu(run_config,image_instance_data)
 
 %unpack data from argument object
 savingname=run_config.namefile;
+saving_path=run_config.saving_path;
 imacount=run_config.imacount;
 PR=run_config.pixel_rate;
 DI=run_config.double_image;
@@ -480,10 +481,11 @@ for n=1:imacount
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if (average==0)
             pic=Image(savingname,SNumber+n-1);
+            pic.set_dir(saving_path);
             pic.timestamp=clock();
             pic.run_config=run_config;
             pic.transfer_metadata(image_instance_data);
-            save_object(pic,pic.self_filename);
+            pic.save();
             dlmwrite(pic.raw_image_filename, result_image1','delimiter', '\t');
             dlmwrite(pic.back_image_filename, result_image2','delimiter', '\t');
             dlmwrite(pic.noise_image_filename, result_image3','delimiter', '\t');
@@ -512,10 +514,11 @@ for n=1:imacount
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if (average==0)
             pic=Image(savingname,SNumber+n-1);
+            pic.set_dir(saving_path);
             pic.timestamp=clock();
             pic.run_config=run_config;
             pic.transfer_metadata(image_instance_data);
-            save_object(pic,pic.self_filename);
+            pic.save();
             dlmwrite(pic.raw_image_filename, result_image1','delimiter', '\t');
         end
         %total_image1=double(total_image1) + double(result_image1');
