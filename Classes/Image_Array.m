@@ -30,7 +30,7 @@ classdef Image_Array < dynamicprops
             if nargin>0
                 self.image_name=image_name;
                 self.create_image_array();
-                self.aggreagate_metadata();
+                self.aggregate_metadata();
             end
         end
         
