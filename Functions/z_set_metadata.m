@@ -6,6 +6,6 @@ function [] = z_set_metadata(object,name,value)
 if isprop(object,name)
     object.(name)=value;
 else
-    object.add_metadata(name,value);
+    add_metadata(object,name,value);
 end
 end

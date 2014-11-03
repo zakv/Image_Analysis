@@ -6,7 +6,7 @@ function [] = z_update_metadata(object,name,value)
 if isprop(object,name)
     object.(name)=value;
 else
-    msgIdent='Image:update_metadata:Nonexistent_Property';
+    msgIdent='Image:z_update_metadata:Nonexistent_Property';
     msgString='The given object does not have property %s';
     error(msgIdent,msgString,name);
 end

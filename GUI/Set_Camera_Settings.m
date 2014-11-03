@@ -22,7 +22,7 @@ function varargout = Set_Camera_Settings(varargin)
 
 % Edit the above text to modify the response to help Set_Camera_Settings
 
-% Last Modified by GUIDE v2.5 02-Nov-2014 01:33:18
+% Last Modified by GUIDE v2.5 02-Nov-2014 21:09:26
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -87,7 +87,7 @@ handles.starting_index=1;
 handles.notes='';
 handles.metadata=cell(0,2);
 temp=clock;
-handles.saving_path=sprintf('F:\\%4d_%02d_%02d',temp(1:3));
+handles.saving_path=sprintf('F:\\Matlab_Pixelfly_USB_07102014\\%4d%02d%02d',temp(1:3));
 set(handles.Saving_Path,'String',handles.saving_path);
 % Choose default command line output for Set_Camera_Settings
 handles.output = hObject;
@@ -291,7 +291,6 @@ temp2=str2num(str);
 if isempty(temp2) %Can happen if someone enters something that's not a number
     temp2=handles.imacount; %Reset to previous value if someone enters something that's not a number
 end
-display(eventdata.Source);
 handles.imacount=temp2;
 temp2=num2str(temp2);
 set(hObject,'String',temp2);
@@ -329,7 +328,7 @@ run_config.double_image=0;
 image_instance_data.notes=handles.notes;
 metadata_cells = get(handles.Metadata, 'data');
 metadata_object=metadata_table_to_object(metadata_cells);
-image_instance_data=combine_metadata(metadata_object,image_instance_data);
+image_instance_data=z_combine_metadata(metadata_object,image_instance_data);
 
 %Create data directory if it does not exist
 if exist(handles.saving_path,'dir')~=7
