@@ -133,6 +133,15 @@ classdef Image_Array < dynamicprops
                 self.image=total/self.n_images();
             end
         end
+        
+        function [] = imagesc(self,varargin)
+            %Creates a plot of image_array.image using imagesc
+            %  Optional additional arguments are passed on to imagesc
+            figure();
+            imagesc(self.image,varargin{:});
+            colorbar();
+            title(self.image_name);
+        end
     end
     
     %Metadata Manipulation (mostly coppied from Image.m)
