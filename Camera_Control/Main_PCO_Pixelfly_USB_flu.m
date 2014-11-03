@@ -523,7 +523,7 @@ for n=1:imacount
         part1=MatrixCopy(double(result_image1'),3);
         
         figure(2)
-        imshow(part1,[300,450]);colorbar()
+        imagesc(part1,[1100,40000]);colorbar()
        
     end 
 end
