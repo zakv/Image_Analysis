@@ -69,7 +69,8 @@ classdef Image < dynamicprops
             %noise_data
             
             %Just in case image_name includes relative path
-            [path,image_name]=z_fileparts( fullfile(pwd,image_name) );
+            [path,image_name,ext]=fileparts( fullfile(pwd,image_name) );
+            image_name=[image_name,ext]; %allows image names with '.' characters
             self.set_file_names_helper(path,image_name,index);
         end
         
@@ -514,7 +515,7 @@ classdef Image < dynamicprops
         
         function [image] = get.image(self)
             %Returns the image data; calculates it if necessary
-            if isempty(self.image)
+            if isempty(self.image) && self.has_raw_image
                 self.calc_image();
             end
             image=self.image;

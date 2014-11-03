@@ -1183,9 +1183,12 @@ function Reset_Camera_Callback(hObject, eventdata, handles)
 % hObject    handle to Reset_Camera (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+%Based off of pco_live.m
 if libisloaded('PCO_CAM_SDK')
+    out_ptr=[]; %Seems to be what pco_live.m uses
     %[errorCode,out_ptr] = calllib('PCO_CAM_SDK', 'PCO_ArmCamera', out_ptr);
-    [errorCode] = calllib('PCO_CAM_SDK', 'PCO_CloseCamera', out_ptr);
+    %[errorCode] = calllib('PCO_CAM_SDK', 'PCO_CloseCamera', out_ptr);
     unloadlibrary('PCO_CAM_SDK');
     disp('PCO_CAM_SDK unloadlibrary done');
 end
