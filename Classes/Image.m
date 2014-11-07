@@ -507,19 +507,37 @@ classdef Image < dynamicprops
             end
         end
         
-        function [full_raw_image] = get_full_raw_image(self)
+        function [raw_image_full] = get_raw_image_full(self)
             %Returns an array with the entire image
-            full_raw_image=Image.load_image_data(self.raw_image_filename);
+            raw_image_full=Image.load_image_data(self.raw_image_filename);
         end
         
-        function [full_back_image] = get_full_back_image(self)
+        function [back_image_full] = get_back_image_full(self)
             %Returns an array with the entire image
-            full_back_image=Image.load_image_data(self.raw_image_filename);
+            back_image_full=Image.load_image_data(self.raw_image_filename);
         end
         
-        function [full_noise_image] = get_full_noise_image(self)
+        function [noise_image_full] = get_noise_image_full(self)
             %Returns an array with the entire image
-            full_noise_image=Image.load_image_data(self.raw_image_filename);
+            noise_image_full=Image.load_image_data(self.raw_image_filename);
+        end
+        
+        function [raw_image_ROI] = get_raw_image_ROI(self)
+            %Returns an array with the image data in the ROI
+            raw_image_full=self.get_raw_image_full();
+            raw_image_ROI=self.extract_ROI(raw_image_full);
+        end
+        
+        function [back_image_ROI] = get_back_image_ROI(self)
+            %Returns an array with the image data in the ROI
+            back_image_full=Image.load_image_data(self.raw_image_filename);
+            back_image_ROI=self.extract_ROI(back_image_full);
+        end
+        
+        function [noise_image_ROI] = get_noise_image_ROI(self)
+            %Returns an array with the image data in the ROI
+            noise_image_full=Image.load_image_data(self.raw_image_filename);
+            noise_image_ROI=self.extract_ROI(noise_image_full);
         end
         
         function [image] = get.image(self)
