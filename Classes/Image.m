@@ -192,6 +192,15 @@ classdef Image < dynamicprops
             imshow(self.image,scale);
         end
         
+        function [] = imagesc(self,varargin)
+            %Creates a plot of image_array.image using imagesc
+            %  Optional additional arguments are passed on to imagesc
+            figure();
+            imagesc(self.image,varargin{:});
+            colorbar();
+            title(Image.get_prefix(self.image_name,self.index));
+        end
+        
         function [] = calc_image(self)
             %Loads data from the hard drive and calculates the image data
             self.load_images();
