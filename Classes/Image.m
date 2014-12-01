@@ -79,19 +79,19 @@ classdef Image < dynamicprops
             %initialized.
             
             %Set Region of Interest
-            self.ROI.row_min=71; %51;
-            self.ROI.row_max=260; %250;
-            self.ROI.col_min=101;
-            self.ROI.col_max=270;
+            self.ROI.row_min=1;%71; %51;
+            self.ROI.row_max=2;%260; %250;
+            self.ROI.col_min=1;%101;
+            self.ROI.col_max=2;%270;
             
             %Set background Region of Interest
             %  Coordinates are relative to the ROI, not the original image.
             %  This region is used to figure out how to scale the
             %  background before subtracting it from raw_data.
-            self.back_ROI.row_min=131;
-            self.back_ROI.row_max=180;
-            self.back_ROI.col_min=110;
-            self.back_ROI.col_max=140;
+            self.back_ROI.row_min=1;%131;
+            self.back_ROI.row_max=2;%180;
+            self.back_ROI.col_min=1;%110;
+            self.back_ROI.col_max=2;%140;
         end
     end
     

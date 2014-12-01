@@ -312,23 +312,44 @@ for n=1:imacount
     save_file71=strcat(savingname,'back-',num2str(SNumber+n-1),'.ascii');
     save_file72=strcat(savingname,'noise-',num2str(SNumber+n-1),'.ascii');
     
-    save_file8=sprintf('AveragedImage-image%04d-%04d-%02d-%02d-%02d-%02d-%2.2g.ascii',n,clock);
-    save_file9=sprintf('ProcessedFluorescenceImage-image%04d-%04d-%02d-%02d-%02d-%02d-%2.2g.ascii',n,clock);
-    save_file10=sprintf('Number_ofatoms-image%04d-%04d-%02d-%02d-%02d-%02d-%2.2g.txt',n,clock);
-    %save_file1=sprintf('test_%04d.tif',n);
-    %save_file2=sprintf('test_%04d.bmp',n);
-    %save_file3=sprintf('test_%04d.ascii',n);
-    %save_file3=save('test_%04d','-ascii');
+   
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %%%%%%%%%%%%%%%%%%%%%%One image cleaning the buffer%%%%%%
+%  dwValidImageCnt=0;
+%         a=0;
+%         while((dwValidImageCnt<1)&&(errorCode==0))
+%             [errorCode,out_ptr,dwValidImageCnt,dwMaxImageCnt]  = calllib('PCO_CAM_SDK', 'PCO_GetNumberOfImagesInSegment', out_ptr,act_segment,dwValidImageCnt,dwMaxImageCnt);
+%          if(errorCode)
+%              disp(['PCO_GetNumberOfImagesInSegment failed with error ',num2str(errorCode,'%X')]);   
+%          end
+%           % disp(['segment ',int2str(act_segment),':  valid images: ',int2str(dwValidImageCnt),' max images ',int2str(dwMaxImageCnt)]);
+%            pause(waittime_s);
+%            a=a+1;
+%            if(a>500)
+%                 disp('timeout in waiting for images');   
+%                 errorCode=1;
+%            end
+%         end
+% 
+%         if(errorCode==0)
+%             [errorCode,out_ptr]  = calllib('PCO_CAM_SDK','PCO_GetImageEx',out_ptr,act_segment,0,0,sBufNr,strSegment.wXRes,strSegment.wYRes,bitpix);
+%             if(errorCode)
+%                 disp(['PCO_GetImageEx failed with error ',num2str(errorCode,'%08X')]);   
+%             else
+%                 disp(['PCO_GetImageEx image ' int2str(n) ' done']);
+%             end
+%         end
+% 
+%         if(errorCode==0)
+%             [errorCode,out_ptr,image_stackTemp]  = calllib('PCO_CAM_SDK','PCO_GetBuffer',out_ptr,sBufNr,im_ptr,ev_ptr);
+%             if(errorCode)
+%                 disp(['PCO_GetBuffer failed with error ',num2str(errorCode,'%08X')]);   
+%             end
+%         end
 
-    %control external components
-    %next line simulates control call
-    %pause(0.5);
 
-    % [errorCode,out_ptr,wtrigdone] = calllib('PCO_CAM_SDK', 'PCO_ForceTrigger', out_ptr,wtrigdone);
-    % if(errorCode)
-    %     disp(['PCO_ForceTrigger failed with error ',num2str(errorCode,'%X')]);   
-    %  end
- 
+        
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     dwValidImageCnt=0;
     a=0;
     while((dwValidImageCnt<1)&&(errorCode==0))
@@ -486,31 +507,73 @@ for n=1:imacount
             pic.run_config=run_config;
             pic.transfer_metadata(image_instance_data);
             pic.save();
-            dlmwrite(pic.raw_image_filename, result_image1','delimiter', '\t');
-            dlmwrite(pic.back_image_filename, result_image2','delimiter', '\t');
-            dlmwrite(pic.noise_image_filename, result_image3','delimiter', '\t');
+%             dlmwrite(pic.raw_image_filename, result_image1','delimiter', '\t');
+%             dlmwrite(pic.back_image_filename, result_image2','delimiter', '\t');
+%             dlmwrite(pic.noise_image_filename, result_image3','delimiter', '\t');
+          % dlmwrite(pic.raw_image_filename, result_image1','delimiter', '\t');
+          % dlmwrite(pic.back_image_filename, result_image2','delimiter', '\t');
+          % dlmwrite(pic.noise_image_filename, result_image3','delimiter', '\t');
         end
         %total_image1=double(total_image1) + double(result_image1');
         %total_image2=double(total_image2) + double(result_image2');
         part1=double(result_image1');
         part2=double(result_image2');
         part3=double(result_image3');
-        part1=part1(50:200,100:250);
-        part2=part2(50:200,100:250);
-        part3=part3(50:200,100:250);
-        figure(2)
-        imshow(result_image1',[0,40000]);colorbar()
+        part1=part1(2*110:2*200,2*80:2*160);
+        part2=part2(2*110:2*200,2*80:2*160);
+        part3=part3(2*110:2*200,2*80:2*160);
+        dlmwrite(pic.raw_image_filename, part1,'delimiter', '\t');
+        dlmwrite(pic.back_image_filename, part2,'delimiter', '\t');
+        dlmwrite(pic.noise_image_filename, part3,'delimiter', '\t');
+        %figure(2)
+        %imagesc(double(result_image2')-double(result_image3'),[0,1100]);colorbar();colormap jet;
         figure(3)
-        imshow(result_image2',[0,40000]);colorbar()
+        imagesc(result_image1',[0,7500]);colorbar();colormap jet;
         figure(4)
-        imshow(result_image3',[0,40000]);colorbar()
+        imagesc(result_image2',[0,7500]);colorbar();colormap jet;
         figure(6)
-        imagesc(-1*log(abs(part1-part3)./abs(part2-part3))/log(10),[-0.15,0.15]);colorbar()
+        imagesc(-1*log(abs(part1-part3)./abs(part2-part3)),[-0.7,0.7]);colorbar()
+        %figure(2)
+        %imagesc(part1-part2,[0,100]);colorbar();colormap jet;
     end    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%For another new picture in the same for sequence.%%%%%%%%
     if (twoimage==0)
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%          dwValidImageCnt=0;
+%         a=0;
+%         while((dwValidImageCnt<1)&&(errorCode==0))
+%             [errorCode,out_ptr,dwValidImageCnt,dwMaxImageCnt]  = calllib('PCO_CAM_SDK', 'PCO_GetNumberOfImagesInSegment', out_ptr,act_segment,dwValidImageCnt,dwMaxImageCnt);
+%          if(errorCode)
+%              disp(['PCO_GetNumberOfImagesInSegment failed with error ',num2str(errorCode,'%X')]);   
+%          end
+%           % disp(['segment ',int2str(act_segment),':  valid images: ',int2str(dwValidImageCnt),' max images ',int2str(dwMaxImageCnt)]);
+%            pause(waittime_s);
+%            a=a+1;
+%            if(a>500)
+%                 disp('timeout in waiting for images');   
+%                 errorCode=1;
+%            end
+%         end
+% 
+%         if(errorCode==0)
+%             [errorCode,out_ptr]  = calllib('PCO_CAM_SDK','PCO_GetImageEx',out_ptr,act_segment,0,0,sBufNr,strSegment.wXRes,strSegment.wYRes,bitpix);
+%             if(errorCode)
+%                 disp(['PCO_GetImageEx failed with error ',num2str(errorCode,'%08X')]);   
+%             else
+%                 disp(['PCO_GetImageEx image ' int2str(n) ' done']);
+%             end
+%         end
+% 
+%         if(errorCode==0)
+%             [errorCode,out_ptr,image_stack4]  = calllib('PCO_CAM_SDK','PCO_GetBuffer',out_ptr,sBufNr,im_ptr,ev_ptr);
+%             if(errorCode)
+%                 disp(['PCO_GetBuffer failed with error ',num2str(errorCode,'%08X')]);   
+%             end
+%         end
+% 
+% 
+%         result_image4=image_stack4;
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if (average==0)
             pic=Image(savingname,SNumber+n-1);
@@ -519,14 +582,24 @@ for n=1:imacount
             pic.run_config=run_config;
             pic.transfer_metadata(image_instance_data);
             pic.save();
+                      
+            
             dlmwrite(pic.raw_image_filename, result_image1','delimiter', '\t');
+            %dlmwrite(pic.back_image_filename, result_image4','delimiter', '\t');
         end
         %total_image1=double(total_image1) + double(result_image1');
         %total_image2=double(total_image2) + double(result_image2');
         part1=MatrixCopy(double(result_image1'),3);
+        %part1back=MatrixCopy(double(result_image4'),3);
         
-        figure(2)
-        imagesc(part1,[1100,40000]);colorbar()
+        %figure(2)
+        %imagesc(part1,[1300,1500]);colorbar()
+        %imagesc(part1-part1back,[0,800]);colorbar()
+        %imagesc(part1-part1back,[0,40000]);colorbar()
+        figure(3)
+        imagesc(part1,[0,40000]);colorbar()
+        %figure(4)
+        %imagesc(part1back,[0,40000]);colorbar()
        
     end 
 end

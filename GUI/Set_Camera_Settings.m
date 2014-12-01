@@ -337,6 +337,7 @@ end
 
 %Run the camera data acquisition software
 Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data);
+%Main_PCO_Pixelfly_USB_flu1110_TwoImagesTrap(run_config,image_instance_data);
 
 %Main_PCO_Pixelfly_USB_07102014_flu(handles.namefile,handles.imacount,handles.pixel_rate,0,handles.trigger,handles.exposure_time,handles.timebase,handles.IR,handles.backloader,handles.sensor_format,handles.h_binning,handles.v_binning,handles.average,handles.twoimage);
 %Main_PCO_Pixelfly_USB_07082012_flu_double(handles.imacount,handles.pixel_rate,0,handles.trigger,handles.exposure_time,handles.timebase,handles.IR,handles.backloader,handles.sensor_format,handles.h_binning,handles.v_binning,handles.average);
