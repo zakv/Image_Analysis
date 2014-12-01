@@ -514,12 +514,12 @@ classdef Image < dynamicprops
         
         function [back_image_full] = get_back_image_full(self)
             %Returns an array with the entire image
-            back_image_full=Image.load_image_data(self.raw_image_filename);
+            back_image_full=Image.load_image_data(self.back_image_filename);
         end
         
         function [noise_image_full] = get_noise_image_full(self)
             %Returns an array with the entire image
-            noise_image_full=Image.load_image_data(self.raw_image_filename);
+            noise_image_full=Image.load_image_data(self.noise_image_filename);
         end
         
         function [raw_image_ROI] = get_raw_image_ROI(self)
@@ -530,13 +530,13 @@ classdef Image < dynamicprops
         
         function [back_image_ROI] = get_back_image_ROI(self)
             %Returns an array with the image data in the ROI
-            back_image_full=Image.load_image_data(self.raw_image_filename);
+            back_image_full=Image.load_image_data(self.back_image_filename);
             back_image_ROI=self.extract_ROI(back_image_full);
         end
         
         function [noise_image_ROI] = get_noise_image_ROI(self)
             %Returns an array with the image data in the ROI
-            noise_image_full=Image.load_image_data(self.raw_image_filename);
+            noise_image_full=Image.load_image_data(self.noise_image_filename);
             noise_image_ROI=self.extract_ROI(noise_image_full);
         end
         
