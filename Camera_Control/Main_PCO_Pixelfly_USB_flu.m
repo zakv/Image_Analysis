@@ -96,8 +96,9 @@ if(errorCode)
     disp(['PCO_GetRecordingState failed with error ',num2str(errorCode,'%X')]);   
 end
 
+%Vendeiro 64bit version had trouble here
 if(act_recstate~=0)
-    [errorCode,out_ptr] = calllib('PCO_CAM_SDK', 'PCO_SetRecordingState', out_ptr, 0);
+    [errorCode,out_ptr] = calllib('PCO_CAM_SDK', 'PCO_SetRecordingState', out_ptr, int32(0));
     if(errorCode)
         disp(['PCO_SetRecordingState failed with error ',num2str(errorCode,'%X')]);   
     end    
@@ -169,10 +170,11 @@ if(errorCode)
     disp(['PCO_ArmCamera failed with error ',num2str(errorCode,'%X')]);   
 end
 
+%Vendeiro 64bit version had trouble here
 [errorCode] = calllib('PCO_CAM_SDK', 'PCO_SetRecordingState', out_ptr, 1);
 if(errorCode)
     disp(['PCO_SetRecordingState failed with error ',num2str(errorCode,'%X')]);   
-end    
+end
 
 
 
@@ -273,6 +275,7 @@ sBufNr=int16(-1);
 im_ptr = libpointer('uint16Ptr',image_stack);
 ev_ptr = libpointer('voidPtr');
 
+%Vendeiro 64bit version had trouble here
 [errorCode,out_ptr,sBufNr,image_stack,ev_ptr]  = calllib('PCO_CAM_SDK','PCO_AllocateBuffer', out_ptr,sBufNr,imasize,im_ptr,ev_ptr);
 if(errorCode)
     disp(['PCO_AllocateBuffer failed with error ',num2str(errorCode,'%08X')]);   
