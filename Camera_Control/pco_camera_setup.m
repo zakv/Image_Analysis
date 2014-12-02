@@ -118,7 +118,10 @@ if (~libisloaded('PCO_CAM_SDK'))
     working_dir=pwd;
     lib_dir=fullfile(mfilename('fullpath'),'..',dir_name);
     cd(lib_dir);
+    display('Disabling warnings about missing datatypes while loading camera library');
+    warning('off','MATLAB:loadlibrary:TypeNotFoundForStructure');
     loadlibrary('SC2_Cam','SC2_CamExport.h','alias','PCO_CAM_SDK');
+    warning('on','MATLAB:loadlibrary:TypeNotFoundForStructure');
     cd(working_dir);
     disp('PCO_CAM_SDK library is loaded!');
 end
