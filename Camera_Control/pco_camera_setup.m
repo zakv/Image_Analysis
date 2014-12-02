@@ -312,7 +312,20 @@ end
 if((exist('del_timebase','var'))&&(exist('del_time','var'))&&(exist('exp_timebase','var'))&&(exist('exp_time','var')))
  [errorCode,out_ptr] = calllib('PCO_CAM_SDK', 'PCO_SetDelayExposureTime', out_ptr,del_time,exp_time,del_timebase,exp_timebase);
  if(errorCode)
-  disp(['PCO_PCO_SetDelayExposureTime failed with error ',num2str(errorCode,'%X')]);   
+  disp(['PCO_PCO_SetDelayExposureTime failed with error ',num2str(errorCode,'%X')]);
+%    errorCode=abs(errorCode);
+%    display(errorCode);
+%    errorCode=typecast(errorCode,'uint64');
+%    display(class(errorCode));
+%    display(errorCode)
+%    display(dec2hex(errorCode));
+%    display(dec2bin(errorCode));
+%    display(int32(errorCode));
+%    display(int64(errorCode));
+%    display(dec2hex(int8(errorCode)));
+%    display(dec2hex(int16(errorCode)));
+%    display(dec2hex(int32(errorCode)));
+%    display(dec2hex(int64(errorCode)));
  end
 end
 
