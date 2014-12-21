@@ -87,7 +87,13 @@ handles.starting_index=1;
 handles.notes='';
 handles.metadata=cell(0,2);
 temp=clock;
-handles.saving_path=sprintf('F:\\Matlab_Pixelfly_USB_07102014\\%4d%02d%02d',temp(1:3));
+[~,hostname]= system('hostname');
+hostname=strtrim(hostname);
+if strcmp(hostname,'waveguide4');
+    handles.saving_path=sprintf('D:\\Matlab_Pixelfly_USB_07102014\\%4d%02d%02d',temp(1:3));
+else
+    handles.saving_path=sprintf('F:\\Matlab_Pixelfly_USB_07102014\\%4d%02d%02d',temp(1:3));
+end
 set(handles.Saving_Path,'String',handles.saving_path);
 % Choose default command line output for Set_Camera_Settings
 handles.output = hObject;
@@ -332,6 +338,7 @@ image_instance_data=z_combine_metadata(metadata_object,image_instance_data);
 
 %Create data directory if it does not exist
 if exist(handles.saving_path,'dir')~=7
+    display(handles.saving_path);
    mkdir(handles.saving_path) 
 end
 
