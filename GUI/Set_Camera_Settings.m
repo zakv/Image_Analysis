@@ -100,7 +100,9 @@ set(handles.Saving_Path,'String',handles.saving_path);
 handles.output = hObject;
 
 %Add paths to use other necessary classes, functions, etc.
-project_root=fullfile(mfilename('fullpath'),'..','..');
+%project_root=fullfile(mfilename('fullpath'),'..','..');
+GUI_dir=fileparts( mfilename('fullpath') ); %Returns full path to directory "GUI"
+project_root=fullfile(GUI_dir,'..'); %Returns full path to directory "Image_Analysis"
 addpath(fullfile(project_root,'Camera_Control'));
 addpath(fullfile(project_root,'Classes'));
 addpath(fullfile(project_root,'Functions'));

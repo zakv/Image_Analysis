@@ -116,7 +116,8 @@ if (~libisloaded('PCO_CAM_SDK'))
     end
     %Change directory to load library, then return to current directory
     working_dir=pwd;
-    lib_dir=fullfile(mfilename('fullpath'),'..',dir_name);
+    Camera_Control_dir=fileparts( mfilename('fullpath') ); %Full path to "Camera_Control"
+    lib_dir=fullfile(Camera_Control_dir,dir_name);
     cd(lib_dir);
     display('Disabling warnings about missing datatypes while loading camera library');
     warning('off','MATLAB:loadlibrary:TypeNotFoundForStructure');
