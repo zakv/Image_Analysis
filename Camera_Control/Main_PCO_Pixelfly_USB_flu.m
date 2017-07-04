@@ -522,20 +522,23 @@ for n=1:imacount
         part1=double(result_image1');
         part2=double(result_image2');
         part3=double(result_image3');
-        part1=part1(2*110:2*200,2*80:2*160);
-        part2=part2(2*110:2*200,2*80:2*160);
-        part3=part3(2*110:2*200,2*80:2*160);
+        part1=part1(240:360,340:460);%(300:340,240:280);%(260:380,200:320);%(270:390,276-76:396-76);
+        part2=part2(240:360,340:460);%(300:340,240:280);%(260:380,200:320);%(270:390,276-76:396-76);
+        part3=part3(240:360,340:460);%(300:340,240:280);%(260:380,200:320);%(270:390,276-76:396-76);
         dlmwrite(pic.raw_image_filename, part1,'delimiter', '\t');
         dlmwrite(pic.back_image_filename, part2,'delimiter', '\t');
         dlmwrite(pic.noise_image_filename, part3,'delimiter', '\t');
+        temppart=-1*log(abs(part1-part3)./abs(part2-part3));
+        %temppart=temppart(40:80,40:80);
         %figure(2)
-        %imagesc(double(result_image2')-double(result_image3'),[0,1100]);colorbar();colormap jet;
+        %imagesc(doub2le(result_image2')-double(result_image3'),[0,1100]);colorbar();colormap jet;
         figure(3)
         imagesc(result_image1',[0,7500]);colorbar();colormap jet;
         figure(4)
         imagesc(result_image2',[0,7500]);colorbar();colormap jet;
         figure(6)
-        imagesc(-1*log(abs(part1-part3)./abs(part2-part3)),[-0.7,0.7]);colorbar()
+        imagesc(temppart,[-0.5,0.5]*2);colorbar()
+        %imagesc(temppart(40:80,40:80),[-0.5,0.5]);colorbar()
         %figure(2)
         %imagesc(part1-part2,[0,100]);colorbar();colormap jet;
     end    

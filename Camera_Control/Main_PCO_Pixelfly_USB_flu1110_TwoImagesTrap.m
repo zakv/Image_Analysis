@@ -450,9 +450,6 @@ for n=1:imacount
 %             dlmwrite(pic.raw_image_filename, result_image1','delimiter', '\t');
 %             dlmwrite(pic.back_image_filename, result_image2','delimiter', '\t');
 %             dlmwrite(pic.noise_image_filename, result_image3','delimiter', '\t');
-            dlmwrite(pic.raw_image_filename, result_image2','delimiter', '\t');
-            dlmwrite(pic.back_image_filename, result_image3','delimiter', '\t');
-            dlmwrite(pic.noise_image_filename, result_image2','delimiter', '\t');
         end
         %total_image1=double(total_image1) + double(result_image1');
         %total_image2=double(total_image2) + double(result_image2');
@@ -460,15 +457,18 @@ for n=1:imacount
         part2=double(result_image2');
         part3=double(result_image3');
         %part1=part1(50:200,100:250);
-        part2=part2(110:230,70:200);
-        part3=part3(110:230,70:200);
+        part2=part2(130:170,180:220);
+        part3=part3(130:170,180:220);
         figure(2)
-       imagesc(part2-part3,[0,10000]);colorbar();colormap jet;
+       imagesc(part2-part3,[0,18000]);colorbar();colormap jet;
        %imagesc(part2-part3,[0,15000]);colorbar();colormap jet;
         figure(3)
          imagesc(result_image2',[0,5000]);colorbar();colormap jet;
          figure(4)
          imagesc(result_image3',[0,5000]);colorbar();colormap jet;
+         dlmwrite(pic.raw_image_filename, part2,'delimiter', '\t');
+         dlmwrite(pic.back_image_filename, part3,'delimiter', '\t');
+         dlmwrite(pic.noise_image_filename, part2-part3,'delimiter', '\t');
         
     end    
 

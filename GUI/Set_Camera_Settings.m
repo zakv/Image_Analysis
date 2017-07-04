@@ -90,7 +90,8 @@ temp=clock;
 [~,hostname]= system('hostname');
 hostname=strtrim(hostname);
 if strcmp(hostname,'waveguide4');
-    handles.saving_path=sprintf('D:\\Matlab_Pixelfly_USB_07102014\\%4d%02d%02d',temp(1:3));
+    %handles.saving_path=sprintf('D:\\Matlab_Pixelfly_USB_07102014\\%4d%02d%02d',temp(1:3));
+    handles.saving_path=sprintf('C:\\Matlab_Pixelfly_USB_07102014\\%4d%02d%02d',temp(1:3));
 else
     handles.saving_path=sprintf('F:\\Matlab_Pixelfly_USB_07102014\\%4d%02d%02d',temp(1:3));
 end
@@ -343,8 +344,9 @@ if exist(handles.saving_path,'dir')~=7
 end
 
 %Run the camera data acquisition software
+%Absorption image 
 Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data);
-%Main_PCO_Pixelfly_USB_flu1110_TwoImagesTrap(run_config,image_instance_data);
+%Fluoresonce image Main_PCO_Pixelfly_USB_flu1110_TwoImagesTrap(run_config,image_instance_data);
 
 %Main_PCO_Pixelfly_USB_07102014_flu(handles.namefile,handles.imacount,handles.pixel_rate,0,handles.trigger,handles.exposure_time,handles.timebase,handles.IR,handles.backloader,handles.sensor_format,handles.h_binning,handles.v_binning,handles.average,handles.twoimage);
 %Main_PCO_Pixelfly_USB_07082012_flu_double(handles.imacount,handles.pixel_rate,0,handles.trigger,handles.exposure_time,handles.timebase,handles.IR,handles.backloader,handles.sensor_format,handles.h_binning,handles.v_binning,handles.average);
