@@ -22,7 +22,7 @@ function varargout = Set_Camera_Settings(varargin)
 
 % Edit the above text to modify the response to help Set_Camera_Settings
 
-% Last Modified by GUIDE v2.5 06-Jul-2017 22:00:37
+% Last Modified by GUIDE v2.5 07-Jul-2017 00:27:49
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -64,7 +64,7 @@ handles.h_binning=1;
 handles.v_binning=1;
 handles.average=0;
 handles.namefile='Savefile';
-handles.absorption_or_fluoresence=1;
+handles.absorption_or_fluorescence=1;
 
 handles.h_binningAbs=3;
 handles.v_binningAbs=3;
@@ -350,11 +350,11 @@ if exist(handles.saving_path,'dir')~=7
 end
 
 %Run the camera data acquisition software
-if handles.absorption_or_fluoresence==1
+if handles.absorption_or_fluorescence==1
     %Absorption image
     Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data);
-elseif handles.absorption_or_fluoresence==2
-    %Fluoresonce image
+elseif handles.absorption_or_fluorescence==2
+    %Fluorescence image
     Main_PCO_Pixelfly_USB_flu1110_TwoImagesTrap(run_config,image_instance_data);
 end
 
@@ -1214,9 +1214,9 @@ if libisloaded('PCO_CAM_SDK')
 end
 
 
-% --- Executes on selection change in AbsorptionOrFluoresence.
-function AbsorptionOrFluoresence_Callback(hObject, eventdata, handles)
-% hObject    handle to AbsorptionOrFluoresence (see GCBO)
+% --- Executes on selection change in AbsorptionOrFluorescence.
+function AbsorptionOrFluorescence_Callback(hObject, eventdata, handles)
+% hObject    handle to AbsorptionOrFluorescence (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 val=get(hObject,'Value');
@@ -1226,14 +1226,14 @@ str=get(hObject,'String');
 % set(handles.Saving_Path,'String',handles.saving_path);
 switch str{val}
     case 'Absorption'
-        handles.absorption_or_fluoresence=1;
+        handles.absorption_or_fluorescence=1;
         %Also set default options in GUI for other parameters
         handles.h_binning=1; %Sets internal data
         handles.v_binning=1;
         handles.exposure_time=200;
         handles.timebase=1;
-    case 'Fluoresence'
-        handles.absorption_or_fluoresence=2;
+    case 'Fluorescence'
+        handles.absorption_or_fluorecsence=2;
         %Also set default options in GUI for other parameters
         handles.h_binning=2;
         handles.v_binning=2;
@@ -1247,13 +1247,13 @@ set(handles.IndicateExposureTime,'String', num2str(handles.exposure_time) );
 set(handles.SelectTimebase,'Value',handles.timebase);
 guidata(hObject,handles)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns AbsorptionOrFluoresence contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from AbsorptionOrFluoresence
+% Hints: contents = cellstr(get(hObject,'String')) returns AbsorptionOrFluorescence contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from AbsorptionOrFluorescence
 
 
 % --- Executes during object creation, after setting all properties.
-function AbsorptionOrFluoresence_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to AbsorptionOrFluoresence (see GCBO)
+function AbsorptionOrFluorescence_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to AbsorptionOrFluorescence (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
