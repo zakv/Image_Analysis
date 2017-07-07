@@ -22,7 +22,7 @@ function varargout = Set_Camera_Settings(varargin)
 
 % Edit the above text to modify the response to help Set_Camera_Settings
 
-% Last Modified by GUIDE v2.5 02-Nov-2014 21:09:26
+% Last Modified by GUIDE v2.5 06-Jul-2017 22:00:37
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -60,13 +60,14 @@ handles.imacount=1;
 handles.IR=1;
 handles.backloader=0;
 handles.sensor_format=1;
-handles.h_binning=2;
-handles.v_binning=2;
+handles.h_binning=1;
+handles.v_binning=1;
 handles.average=0;
 handles.namefile='Savefile';
+handles.absorption_or_fluoresence=1;
 
-handles.h_binningAbs=2;
-handles.v_binningAbs=2;
+handles.h_binningAbs=3;
+handles.v_binningAbs=3;
 handles.exposure_timeAbs=400;
 handles.IRAbs=1;
 handles.imacountAbs=1;
@@ -349,9 +350,13 @@ if exist(handles.saving_path,'dir')~=7
 end
 
 %Run the camera data acquisition software
-%Absorption image Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data);
-%Fluoresonce image
-Main_PCO_Pixelfly_USB_flu1110_TwoImagesTrap(run_config,image_instance_data);
+if handles.absorption_or_fluoresence==1
+    %Absorption image
+    Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data);
+elseif handles.absorption_or_fluoresence==2
+    %Fluoresonce image
+    Main_PCO_Pixelfly_USB_flu1110_TwoImagesTrap(run_config,image_instance_data);
+end
 
 %Main_PCO_Pixelfly_USB_07102014_flu(handles.namefile,handles.imacount,handles.pixel_rate,0,handles.trigger,handles.exposure_time,handles.timebase,handles.IR,handles.backloader,handles.sensor_format,handles.h_binning,handles.v_binning,handles.average,handles.twoimage);
 %Main_PCO_Pixelfly_USB_07082012_flu_double(handles.imacount,handles.pixel_rate,0,handles.trigger,handles.exposure_time,handles.timebase,handles.IR,handles.backloader,handles.sensor_format,handles.h_binning,handles.v_binning,handles.average);
@@ -1206,4 +1211,36 @@ if libisloaded('PCO_CAM_SDK')
     %[errorCode] = calllib('PCO_CAM_SDK', 'PCO_CloseCamera', out_ptr);
     unloadlibrary('PCO_CAM_SDK');
     disp('PCO_CAM_SDK unloadlibrary done');
+end
+
+
+% --- Executes on selection change in AbsorptionOrFluoresence.
+function AbsorptionOrFluoresence_Callback(hObject, eventdata, handles)
+% hObject    handle to AbsorptionOrFluoresence (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+val=get(hObject,'Value');
+str=get(hObject,'String');
+switch str{val}
+    case 'Absorption'
+        handles.absorption_or_fluoresence=1;
+    case 'Fluoresence'
+        handles.absorption_or_fluoresence=2;
+end
+guidata(hObject,handles)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns AbsorptionOrFluoresence contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from AbsorptionOrFluoresence
+
+
+% --- Executes during object creation, after setting all properties.
+function AbsorptionOrFluoresence_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to AbsorptionOrFluoresence (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
 end
