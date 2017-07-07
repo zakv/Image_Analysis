@@ -1221,12 +1221,30 @@ function AbsorptionOrFluoresence_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 val=get(hObject,'Value');
 str=get(hObject,'String');
+% temp2=num2str(temp2);
+% set(hObject,'String',temp2);
+% set(handles.Saving_Path,'String',handles.saving_path);
 switch str{val}
     case 'Absorption'
         handles.absorption_or_fluoresence=1;
+        %Also set default options in GUI for other parameters
+        handles.h_binning=1; %Sets internal data
+        handles.v_binning=1;
+        handles.exposure_time=200;
+        handles.timebase=1;
     case 'Fluoresence'
         handles.absorption_or_fluoresence=2;
+        %Also set default options in GUI for other parameters
+        handles.h_binning=2;
+        handles.v_binning=2;
+        handles.exposure_time=5;
+        handles.timebase=2;
 end
+%Update displayed values in GUI
+set(handles.HBinning,'String', num2str(handles.h_binning) );
+set(handles.VBinning,'String', num2str(handles.v_binning) );
+set(handles.IndicateExposureTime,'String', num2str(handles.exposure_time) );
+set(handles.SelectTimebase,'Value',handles.timebase);
 guidata(hObject,handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns AbsorptionOrFluoresence contents as cell array
