@@ -100,7 +100,6 @@ set(handles.Saving_Path,'String',handles.saving_path);
 handles.output = hObject;
 
 %Add paths to use other necessary classes, functions, etc.
-%project_root=fullfile(mfilename('fullpath'),'..','..');
 GUI_dir=fileparts( mfilename('fullpath') ); %Returns full path to directory "GUI"
 project_root=fullfile(GUI_dir,'..'); %Returns full path to directory "Image_Analysis"
 addpath(fullfile(project_root,'Camera_Control'));
@@ -108,6 +107,10 @@ addpath(fullfile(project_root,'Classes'));
 addpath(fullfile(project_root,'Functions'));
 addpath(fullfile(project_root,'GUI'));
 addpath(fullfile(project_root,'Scripts'));
+%Add path for eigenbasis imaging.  Assume that the parent directory for
+%that project is in the same directory as this project (Currently both are
+%on the desktop of the Camera Computer
+addpath(fullfile(project_root,'..','AbsorptionImageProcessing','AbsorptionImageProcessing'));
 
 % Update handles structure
 guidata(hObject, handles);
@@ -346,9 +349,9 @@ if exist(handles.saving_path,'dir')~=7
 end
 
 %Run the camera data acquisition software
-%Absorption image 
-Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data);
-%Fluoresonce image Main_PCO_Pixelfly_USB_flu1110_TwoImagesTrap(run_config,image_instance_data);
+%Absorption image Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data);
+%Fluoresonce image
+Main_PCO_Pixelfly_USB_flu1110_TwoImagesTrap(run_config,image_instance_data);
 
 %Main_PCO_Pixelfly_USB_07102014_flu(handles.namefile,handles.imacount,handles.pixel_rate,0,handles.trigger,handles.exposure_time,handles.timebase,handles.IR,handles.backloader,handles.sensor_format,handles.h_binning,handles.v_binning,handles.average,handles.twoimage);
 %Main_PCO_Pixelfly_USB_07082012_flu_double(handles.imacount,handles.pixel_rate,0,handles.trigger,handles.exposure_time,handles.timebase,handles.IR,handles.backloader,handles.sensor_format,handles.h_binning,handles.v_binning,handles.average);

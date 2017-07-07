@@ -528,7 +528,16 @@ for n=1:imacount
         dlmwrite(pic.raw_image_filename, part1,'delimiter', '\t');
         dlmwrite(pic.back_image_filename, part2,'delimiter', '\t');
         dlmwrite(pic.noise_image_filename, part3,'delimiter', '\t');
-        temppart=-1*log(abs(part1-part3)./abs(part2-part3));
+%         temppart=-1*log(abs(part1-part3)./abs(part2-part3));
+        
+        %Vendeiro New background removal stuff as of July 5th 2017
+        %The background removal needs to know which part of the image has
+        %atoms so that region can be ignored.  Specify that region in the
+        %line below
+        row_min=40; row_max=60; col_min=50; col_max=80; %Region of part1 that may have atoms
+        temppart=quick_back_removal_eig(saving_path,part1,row_min,row_max,col_min,col_max,part2);
+        %Vendeiro End of new background removal stuff
+        
         %temppart=temppart(40:80,40:80);
         %figure(2)
         %imagesc(doub2le(result_image2')-double(result_image3'),[0,1100]);colorbar();colormap jet;
