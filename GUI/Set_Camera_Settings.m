@@ -349,6 +349,7 @@ if exist(handles.saving_path,'dir')~=7
    mkdir(handles.saving_path) 
 end
 
+display(handles.absorption_or_fluorescence);
 %Run the camera data acquisition software
 if handles.absorption_or_fluorescence==1
     %Absorption image
@@ -1233,7 +1234,7 @@ switch str{val}
         handles.exposure_time=200;
         handles.timebase=1;
     case 'Fluorescence'
-        handles.absorption_or_fluorecsence=2;
+        handles.absorption_or_fluorescence=2;
         %Also set default options in GUI for other parameters
         handles.h_binning=2;
         handles.v_binning=2;
