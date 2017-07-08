@@ -24,11 +24,13 @@ function [ OD_eig ] = quick_back_removal_eig( saving_path, image_in, row_min, ro
 %   temppart will be a 2D array giving the OD of the cloud (after the
 %   background has been removed)
 
+max_input_backs=50; %Maximum number of background images to use
+
 %First get the most recent files, up to 50 of them
 all_files=dir( fullfile(saving_path,'*_back.ascii') );
 [~, sorting_indices]=sort([all_files.datenum],'descend');
 all_files=all_files(sorting_indices); %all the '*_back.ascii' files sorted
-recent_files=all_files( 1:min(50,end) ); %Take up to 50 most recent files
+recent_files=all_files( 1:min(end,max_input_backs) ); %Take up to 50 most recent files
 file_list={recent_files.name}'; %Convert to cell array of strings
 file_list=fullfile(saving_path,file_list); %Include directory in filenames
 
