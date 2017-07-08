@@ -34,6 +34,21 @@ recent_files=all_files( 1:min(end,max_input_backs) ); %Take up to 50 most recent
 file_list={recent_files.name}'; %Convert to cell array of strings
 file_list=fullfile(saving_path,file_list); %Include directory in filenames
 
+%Turns out the saved fluorescence images have different dimensions, which
+%messes up the code.  A not-so-great workaround is to load all the images
+%in file_list and make sure they have the same dimension as image_in
+usable_indices=false(1,length(file_list))'; %Will be used to mark files for use
+desired_size=size(image_in);
+for k=1:length(file_list)
+    back_image_candidate=dlmread( file_list{k},'\t');
+    if isequal(desired_size, size(back_image_candidate) );
+        %Correct size, mark this image as one to be used
+        usable_indices(k)=true;
+    end
+end
+%Now use logical indexing to pick out only images of the correct size
+file_list=file_list(usable_indices);
+
 %The eigenfaces code doesn't like it when too few images are used to make a
 %basis, so if we have too few files we'll fall back to the naive background
 %subtraction algorithm
