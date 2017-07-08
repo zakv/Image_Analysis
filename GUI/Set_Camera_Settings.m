@@ -349,7 +349,6 @@ if exist(handles.saving_path,'dir')~=7
    mkdir(handles.saving_path) 
 end
 
-display(handles.absorption_or_fluorescence);
 %Run the camera data acquisition software
 if handles.absorption_or_fluorescence==1
     %Absorption image
