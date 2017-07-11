@@ -1,4 +1,4 @@
-function [ OD_eig ] = quick_back_removal_eig( saving_path, image_in, row_min, row_max, col_min, col_max, back_image )
+function [ OD ] = quick_back_removal_eig( saving_path, image_in, row_min, row_max, col_min, col_max, back_image )
 %Does a quick background removal and returns a 2D array giving the cloud OD
 %   This function uses the 50 most recent background images in saving_path
 %   (or fewer if there are less than 50 in that directory) with the
@@ -26,34 +26,21 @@ function [ OD_eig ] = quick_back_removal_eig( saving_path, image_in, row_min, ro
 
 max_input_backs=50; %Maximum number of background images to use
 
-%First get the most recent files, up to 50 of them
-all_files=dir( fullfile(saving_path,'*_back.ascii') );
-[~, sorting_indices]=sort([all_files.datenum],'descend');
-all_files=all_files(sorting_indices); %all the '*_back.ascii' files sorted
-recent_files=all_files( 1:min(end,max_input_backs) ); %Take up to 50 most recent files
-file_list={recent_files.name}'; %Convert to cell array of strings
-file_list=fullfile(saving_path,file_list); %Include directory in filenames
+%First get the most recent files, up to max_input_backs of them
+ls_pattern=fullfile(saving_path,'*_back.ascii');
+file_list=get_recent_file_list(ls_pattern,max_input_backs);
 
 %Turns out the saved fluorescence images have different dimensions, which
-%messes up the code.  A not-so-great workaround is to load all the images
-%in file_list and make sure they have the same dimension as image_in
-usable_indices=false(1,length(file_list))'; %Will be used to mark files for use
+%messes up the code.  We'll tell the make_basis_eig() to only use images
+%the same size as image_in
 desired_size=size(image_in);
-for k=1:length(file_list)
-    back_image_candidate=dlmread( file_list{k},'\t');
-    if isequal(desired_size, size(back_image_candidate) );
-        %Correct size, mark this image as one to be used
-        usable_indices(k)=true;
-    end
-end
-%Now use logical indexing to pick out only images of the correct size
-file_list=file_list(usable_indices);
 
 %The eigenfaces code doesn't like it when too few images are used to make a
 %basis, so if we have too few files we'll fall back to the naive background
 %subtraction algorithm
+OD_old=-1*log(abs(image_in)./abs(back_image));
 if length(file_list)<=2
-    OD_eig=-1*log(abs(image_in)./abs(back_image));
+    OD=OD_old;
 else
     
     %Make background region
@@ -64,11 +51,20 @@ else
     %Disable this inconsequential warning that seems to only occur for old
     %Matlab versions
     warning('off','MATLAB:eigs:TooManyRequestedEigsForRealSym');
-    [basis_eig, mean_back] = make_basis_eig(file_list,back_region,max_vectors);
+    [basis_eig, mean_back] = make_basis_eig(file_list,back_region,max_vectors,desired_size);
     warning('on','MATLAB:eigs:TooManyRequestedEigsForRealSym');
     
     %Use the basis to get the atomic cloud's optical depth
-    OD_eig = get_OD_eig(image_in,basis_eig,mean_back,back_region);
+    OD = get_OD_eig(image_in,basis_eig,mean_back,back_region);
+    
+    %The eigenfaces algorithm can go crazy if the camera misbehaves.  In
+    %such cases the reconstructed background can have negative values,
+    %which causes the calculated OD to be complex instead of purely real.
+    %If that happens, we'll just fall back to the old simple algorithm.
+    if ~isreal(OD)
+        disp('Eigenfaces had some issues, using old method instead');
+        OD=OD_old;
+    end
     
 end
 
