@@ -460,7 +460,11 @@ for n=1:imacount
         part2=part2(130:170,180:220);
         part3=part3(130:170,180:220);
         figure(2)
-       imagesc(part2-part3,[0,18000]);colorbar();colormap jet;
+        atom_image=part2-part3;
+       imagesc(atom_image,[0,18000]);colorbar();colormap jet;
+        peak_counts=max(max(atom_image));
+        title_string=sprintf('Peak Pixel Count is %d', peak_counts);
+        title(title_string,'FontSize',30);
        %imagesc(part2-part3,[0,15000]);colorbar();colormap jet;
         figure(3)
          imagesc(result_image2',[0,5000]);colorbar();colormap jet;
