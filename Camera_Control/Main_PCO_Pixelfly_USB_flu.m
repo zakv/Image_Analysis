@@ -546,7 +546,10 @@ for n=1:imacount
         figure(4)
         imagesc(result_image2',[0,7500]);colorbar();colormap jet;
         figure(6)
-        imagesc(temppart,[-0.5,0.5]*2);colorbar()
+        imagesc(temppart,[-0.5,0.5]*3);colorbar()
+        peak_OD=max(max(temppart));
+        title_string=sprintf('Peak OD is %0.2f', peak_OD);
+        title(title_string,'FontSize',30);
         %imagesc(temppart(40:80,40:80),[-0.5,0.5]);colorbar()
         %figure(2)
         %imagesc(part1-part2,[0,100]);colorbar();colormap jet;
