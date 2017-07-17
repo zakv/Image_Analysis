@@ -546,8 +546,10 @@ for n=1:imacount
         figure(4)
         imagesc(result_image2',[0,7500]);colorbar();colormap jet;
         figure(6)
-        imagesc(temppart,[-0.5,0.5]*3);colorbar()
-        peak_OD=max(max(temppart));
+        imagesc(temppart,[-0.1,0.5]*0.25);colorbar();
+        back_region=make_back_region(temppart,row_min,row_max,col_min,col_max);
+        atompart=temppart.*(1-back_region); %Image with all pixels in the back region set to 0
+        peak_OD=max(max(atompart));
         title_string=sprintf('Peak OD is %0.2f', peak_OD);
         title(title_string,'FontSize',30);
         %imagesc(temppart(40:80,40:80),[-0.5,0.5]);colorbar()
