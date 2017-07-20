@@ -534,7 +534,12 @@ for n=1:imacount
         %The background removal needs to know which part of the image has
         %atoms so that region can be ignored.  Specify that region in the
         %line below
-        row_min=20; row_max=70; col_min=40; col_max=90; %Region of part1 that may have atoms
+        row_min=20; row_max=70; col_min=30; col_max=80; %Region of part1 that may have atoms
+        %Clear image data cache in case we use the same file name twice
+        try
+            load_image('',true); %Throws and error since '' is not a real file name
+        catch
+        end
         temppart=quick_back_removal_eig(saving_path,part1,row_min,row_max,col_min,col_max,part2);
         %Vendeiro End of new background removal stuff
         
