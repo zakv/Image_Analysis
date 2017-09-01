@@ -44,6 +44,11 @@ function Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data)
 %free allocated memory
 %stop camera
 
+%The background removal needs to know which part of the image has
+%atoms so that region can be ignored.  Specify that region in the
+%line below
+row_min=20; row_max=70; col_min=30; col_max=80; %Region that may have atoms
+
 %unpack data from argument object
 savingname=run_config.namefile;
 saving_path=run_config.saving_path;
@@ -522,19 +527,15 @@ for n=1:imacount
         part1=double(result_image1');
         part2=double(result_image2');
         part3=double(result_image3');
-        part1=part1(240:360,340:460);%(300:340,240:280);%(260:380,200:320);%(270:390,276-76:396-76);
-        part2=part2(240:360,340:460);%(300:340,240:280);%(260:380,200:320);%(270:390,276-76:396-76);
-        part3=part3(240:360,340:460);%(300:340,240:280);%(260:380,200:320);%(270:390,276-76:396-76);
+        part1=part1(230:350,330:450);%(300:340,240:280);%(260:380,200:320);%(270:390,276-76:396-76);
+        part2=part2(230:350,330:450);%(300:340,240:280);%(260:380,200:320);%(270:390,276-76:396-76);
+        part3=part3(230:350,330:450);%(300:340,240:280);%(260:380,200:320);%(270:390,276-76:396-76);
         dlmwrite(pic.raw_image_filename, part1,'delimiter', '\t');
         dlmwrite(pic.back_image_filename, part2,'delimiter', '\t');
         dlmwrite(pic.noise_image_filename, part3,'delimiter', '\t');
 %         temppart=-1*log(abs(part1-part3)./abs(part2-part3));
         
         %Vendeiro New background removal stuff as of July 5th 2017
-        %The background removal needs to know which part of the image has
-        %atoms so that region can be ignored.  Specify that region in the
-        %line below
-        row_min=20; row_max=70; col_min=30; col_max=80; %Region of part1 that may have atoms
         %Clear image data cache in case we use the same file name twice
         try
             load_image('',true); %Throws and error since '' is not a real file name
