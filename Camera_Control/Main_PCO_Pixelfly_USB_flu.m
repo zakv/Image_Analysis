@@ -47,7 +47,13 @@ function Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data)
 %The background removal needs to know which part of the image has
 %atoms so that region can be ignored.  Specify that region in the
 %line below
-row_min=20; row_max=70; col_min=30; col_max=80; %Region that may have atoms
+% row_min=1; row_max=70; col_min=20; col_max=80; %Region that may have atoms
+row_min=20; row_max=60; col_min=1; col_max=121; %Region that may have atoms
+% row_min=20; row_max=60; col_min=1; col_max=450; %Region that may have atoms
+
+%Set range for colobar scale of atom OD plot
+OD_colorbar_range=[-0.1,0.5]*1.2;
+% OD_colorbar_range=[-0.1,1.1];
 
 %unpack data from argument object
 savingname=run_config.namefile;
@@ -527,9 +533,9 @@ for n=1:imacount
         part1=double(result_image1');
         part2=double(result_image2');
         part3=double(result_image3');
-        part1=part1(230:350,330:450);%(300:340,240:280);%(260:380,200:320);%(270:390,276-76:396-76);
-        part2=part2(230:350,330:450);%(300:340,240:280);%(260:380,200:320);%(270:390,276-76:396-76);
-        part3=part3(230:350,330:450);%(300:340,240:280);%(260:380,200:320);%(270:390,276-76:396-76);
+        part1=part1(230:350,330:450);%(230:350,150:600);
+        part2=part2(230:350,330:450);%(230:350,150:600);
+        part3=part3(230:350,330:450);%(230:350,150:600);
         dlmwrite(pic.raw_image_filename, part1,'delimiter', '\t');
         dlmwrite(pic.back_image_filename, part2,'delimiter', '\t');
         dlmwrite(pic.noise_image_filename, part3,'delimiter', '\t');
@@ -552,7 +558,7 @@ for n=1:imacount
         figure(4)
         imagesc(result_image2',[0,7500]);colorbar();colormap jet;
         figure(6)
-        imagesc(temppart,[-0.1,0.5]*1.2);colorbar();
+        imagesc(temppart,OD_colorbar_range);colorbar();
         back_region=make_back_region(temppart,row_min,row_max,col_min,col_max);
         atompart=temppart.*(1-back_region); %Image with all pixels in the back region set to 0
         peak_OD=max(max(atompart));
