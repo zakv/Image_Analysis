@@ -457,11 +457,11 @@ for n=1:imacount
         part2=double(result_image2');
         part3=double(result_image3');
         %part1=part1(50:200,100:250);
-        part2=part2(130:170,180:220);
-        part3=part3(130:170,180:220);
+        part2=part2(80:160,150:230);
+        part3=part3(80:160,150:230);
         figure(2)
         atom_image=part2-part3;
-       imagesc(atom_image,[0,18000]);colorbar();colormap jet;
+       imagesc(atom_image,[0,20000]);colorbar();colormap jet;
         peak_counts=max(max(atom_image));
         title_string=sprintf('Peak Pixel Count is %d', peak_counts);
         title(title_string,'FontSize',30);
