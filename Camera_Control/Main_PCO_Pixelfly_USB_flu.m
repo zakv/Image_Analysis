@@ -47,21 +47,22 @@ function Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data)
 %The background removal needs to know which part of the image has
 %atoms so that region can be ignored.  Specify that region in the
 %line below
-% row_min=1; row_max=70; col_min=20; col_max=80; %Region that may have atoms
-row_min=20; row_max=80; col_min=1; col_max=121; %Region that may have atoms
-% row_min=1; row_max=241; col_min=1; col_max=241; %Region that may have atoms
+% row_min=50; row_max=350; col_min=1; col_max=171; %Region that may have atoms
+% row_min=35; row_max=135; col_min=1; col_max=301; %Region that may have atoms
+% row_min=10; row_max=70; col_min=1; col_max=800; %Region that may have atoms
+row_min=35; row_max=135; col_min=1; col_max=171; %Region that may have atoms
 
 %Set range for colobar scale of atom OD plot
 OD_colorbar_range=[-0.1,0.5]*1.2;
-% OD_colorbar_range=[-0.1,1.7];
-% OD_colorbar_range=[-0.1,2];
+% OD_colorbar_range=[-0.1,2.];
+% OD_colorbar_range=[-0.1,0.4];
 
 %Set region of interest for analysis [row_min,row_max;col_min,col_max]
 %(Note semicolon between row and columns indices)
-% analysis_ROI=[230,350;330,450];
-% analysis_ROI=[200,320;260,380];
-% analysis_ROI=[140,380;200,440];
-analysis_ROI=[210,330;295,415];
+% analysis_ROI=[1,405;298,468];
+% analysis_ROI=[248,418;233,533];
+% analysis_ROI=[260,340;1,800];
+analysis_ROI=[215,385;295,465];
 
 %unpack data from argument object
 savingname=run_config.namefile;
