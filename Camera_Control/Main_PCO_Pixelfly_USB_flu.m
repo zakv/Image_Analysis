@@ -62,7 +62,8 @@ OD_colorbar_range=[-0.1,0.5]*1.2;
 % analysis_ROI=[1,405;298,468];
 % analysis_ROI=[248,418;233,533];
 % analysis_ROI=[260,340;1,800];
-analysis_ROI=[215,385;295,465];
+% analysis_ROI=[215,385;295,465];
+analysis_ROI=[215,385;345,515];
 
 %unpack data from argument object
 savingname=run_config.namefile;
