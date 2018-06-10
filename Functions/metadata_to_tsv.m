@@ -5,14 +5,12 @@ function [  ] = metadata_to_tsv( metadata, filename )
 %   always has two columns.
 %
 %   Inputs:
-%   *metadata should be 2-column cell array of data for the images.  It can
+%   *metadata should be a 2-column cell array of data for the images.  It can
 %   have any number of rows and can hold any data that can be represented
 %   as a string.  To avoid conflicts with the .tsv format, we'll strip any
 %   tab characters from the data
-%   *filename should be the name
-%
-%   TODO:
-%   *filename should have path and/or file extension?
+%   *filename should give the name of the file to be saved, including path
+%   and file extension
 
 %First let's get the metadata into the right form, i.e. strings without tab
 [nRows,nCols] = size(metadata);
