@@ -553,6 +553,12 @@ for n=1:imacount
         dlmwrite(pic.raw_image_filename, part1,'delimiter', '\t');
         dlmwrite(pic.back_image_filename, part2,'delimiter', '\t');
         dlmwrite(pic.noise_image_filename, part3,'delimiter', '\t');
+        
+        %Crappy way to store metadata, but we'll hopefully ditch this whole
+        %program anyway
+        metadata_filename=strrep(pic.raw_image_filename,'_raw.ascii','_metadata.tsv');
+        struct_to_tsv(image_instance_data,metadata_filename)
+        
 %         temppart=-1*log(abs(part1-part3)./abs(part2-part3));
         
         %Vendeiro New background removal stuff as of July 5th 2017

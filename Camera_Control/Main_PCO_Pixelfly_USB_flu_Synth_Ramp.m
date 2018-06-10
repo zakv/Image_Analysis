@@ -578,6 +578,11 @@ for n=1:imacount
         dlmwrite( strcat(prefix,'raw',suffix), part1,'delimiter', '\t');
         dlmwrite( strcat(prefix,'back',suffix), part2,'delimiter', '\t');
         dlmwrite( strcat(prefix,'noise',suffix), part3,'delimiter', '\t');
+        
+        %Crappy way to store metadata, but we'll hopefully ditch this whole
+        %program anyway
+        metadata_filename=strrep( strcat(prefix,'raw',suffix),'_raw.ascii','_metadata.tsv');
+        struct_to_tsv(image_instance_data,metadata_filename)
 %         temppart=-1*log(abs(part1-part3)./abs(part2-part3));
         
         %Vendeiro New background removal stuff as of July 5th 2017
