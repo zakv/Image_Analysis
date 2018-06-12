@@ -1111,7 +1111,7 @@ function Add_Row_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 metadata = get(handles.Metadata, 'data');
-metadata(end+1,:) = cell(1,2);
+metadata(end+1,:) = {'',''}; %empty strings to make data type char
 handles.metadata=metadata;
 set(handles.Metadata,'Data',metadata)
 guidata(hObject,handles);
