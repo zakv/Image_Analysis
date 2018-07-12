@@ -22,7 +22,7 @@ function varargout = Set_Camera_Settings(varargin)
 
 % Edit the above text to modify the response to help Set_Camera_Settings
 
-% Last Modified by GUIDE v2.5 07-Jul-2017 00:27:49
+% Last Modified by GUIDE v2.5 11-Jul-2018 19:46:25
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1263,3 +1263,19 @@ function AbsorptionOrFluorescence_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in Free_Run.
+function Free_Run_Callback(hObject, eventdata, handles)
+% hObject    handle to Free_Run (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+%Edit the values in this copy of handles for free run mode
+date_string=num2str(now,12); %12 digits is enough to be unique
+date_string=strrep(date_string,'.','p'); %replace decimal with 'p'
+handles.namefile=strcat('freeRun',date_string);
+handles.imacount=1e5; %Effectively run forever
+
+%Call the run button callback, but with the modified handles
+run_Callback(hObject, eventdata, handles);
