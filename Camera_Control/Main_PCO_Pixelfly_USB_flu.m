@@ -47,28 +47,27 @@ function Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data)
 %The background removal needs to know which part of the image has
 %atoms so that region can be ignored.  Specify that region in the
 %line below
-% row_min=50; row_max=350; col_min=1; col_max=171; %Region that may have atoms
-% row_min=35; row_max=135; col_min=1; col_max=301; %Region that may have atoms
-% row_min=10; row_max=70; col_min=1; col_max=800; %Region that may have atoms
-% row_min=35; row_max=135; col_min=1; col_max=171; %Region that may have atoms
-% row_min=1; row_max=171; col_min=1; col_max=171; %Region that may have atoms
-% row_min=20; row_max=120; col_min=1; col_max=301; %Region that may have atoms
-% row_min=20; row_max=280; col_min=35; col_max=135; %Region that may have atoms (for long TOF scans)
-row_min=20; row_max=280; col_min=1; col_max=171; %Region that may have atoms (for long TOF scans)
+row_min=20; row_max=120; col_min=1; col_max=301; %Region that may have atoms (usual values)
+% row_min=20; row_max=100; col_min=1; col_max=1001; %Region that may have atoms (for Stern Gerlach in YS)
+% row_min=20; row_max=301; col_min=75; col_max=225; %Region that may have atoms (for Stern Gerlach)
+% row_min=20; row_max=471; col_min=75; col_max=225; %Region that may have atoms (for long TOF Stern Gerlach)
+% row_min=1; row_max=21; col_min=75; col_max=225; %Region that may have atoms (for fine precision aligning X to Y)
+% row_min=10; row_max=40; col_min=1; col_max=81; %Region that may have atoms (for looking at oscillations in crossed ODT)
 
 %Set range for colobar scale of atom OD plot
 OD_colorbar_range=[-0.1,0.5]*1.2;
+% OD_colorbar_range=[-0.1,0.5]*0.5;
 % OD_colorbar_range=[-0.1,2.];
 % OD_colorbar_range=[-0.1,0.4];
 
 %Set region of interest for analysis [row_min,row_max;col_min,col_max]
 %(Note semicolon between row and columns indices)
-% analysis_ROI=[455,625;525,825];
-% analysis_ROI=[435,605;590,760];
-% analysis_ROI=[435,605;640,810];
-analysis_ROI=[490,790;590,760]; % (for long TOF scans)
-analysis_ROI=[490,1040;590,760]; % (for longer TOF scans)
-% analysis_ROI=[390,690;525,825];  % (for finding X beam)
+analysis_ROI=[470,640;546,846]; %Usual values
+% analysis_ROI=[470,590;200,1200]; % (for Stern Gerlach in YS)
+% analysis_ROI=[470,770;546,846]; % (for Stern Gerlach)
+% analysis_ROI=[470,940;546,846]; % (for long TOF Stern Gerlach)
+% analysis_ROI=[510,530;546,846]; % (for fine precision aligning X to Y)
+% analysis_ROI=[500,550;666,746]; % (for looking at oscillations in crossed ODT)
 
 %unpack data from argument object
 savingname=run_config.namefile;
