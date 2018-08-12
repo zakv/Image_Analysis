@@ -564,7 +564,7 @@ for n=1:imacount
         %Save the data
         dlmwrite(raw_image_filename, part1,'delimiter', '\t');
         dlmwrite(back_image_filename, part2,'delimiter', '\t');
-        dlmwrite(noise_image_filename, part3,'delimiter', '\t');
+%         dlmwrite(noise_image_filename, part3,'delimiter', '\t');
         struct_to_tsv(image_instance_data,metadata_filename);
         
         
