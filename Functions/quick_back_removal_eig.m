@@ -24,7 +24,7 @@ function [ OD ] = quick_back_removal_eig( saving_path, image_in, row_min, row_ma
 %   temppart will be a 2D array giving the OD of the cloud (after the
 %   background has been removed)
 
-max_input_backs=50; %Maximum number of background images to use
+max_input_backs=20; %50; %Maximum number of background images to use
 
 %First get the most recent files, up to max_input_backs of them
 ls_pattern=fullfile(saving_path,'*_back.ascii');
