@@ -27,8 +27,7 @@ function [ OD ] = quick_back_removal_eig( saving_path, image_in, row_min, row_ma
 max_input_backs=20; %50; %Maximum number of background images to use
 
 %First get the most recent files, up to max_input_backs of them
-ls_pattern=fullfile(saving_path,'*_back.ascii');
-file_list=get_recent_file_list(ls_pattern,max_input_backs);
+file_list=get_recent_back_list_fast( saving_path, max_input_backs );
 
 %Turns out the saved fluorescence images have different dimensions, which
 %messes up the code.  We'll tell the make_basis_eig() to only use images
