@@ -529,12 +529,12 @@ for n=1:imacount
         result_image3=image_stack3;
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if (average==0)
-            pic=Image(savingname,SNumber+n-1);
-            pic.set_dir(saving_path);
-            pic.timestamp=clock();
-            pic.run_config=run_config;
-            pic.transfer_metadata(image_instance_data);
-            pic.save();
+%             pic=Image(savingname,SNumber+n-1);
+%             pic.set_dir(saving_path);
+%             pic.timestamp=clock();
+%             pic.run_config=run_config;
+%             pic.transfer_metadata(image_instance_data);
+%             pic.save();
 %             dlmwrite(pic.raw_image_filename, result_image1','delimiter', '\t');
 %             dlmwrite(pic.back_image_filename, result_image2','delimiter', '\t');
 %             dlmwrite(pic.noise_image_filename, result_image3','delimiter', '\t');
@@ -552,14 +552,21 @@ for n=1:imacount
         part1=part1(rmin:rmax,cmin:cmax);
         part2=part2(rmin:rmax,cmin:cmax);
         part3=part3(rmin:rmax,cmin:cmax);
-        dlmwrite(pic.raw_image_filename, part1,'delimiter', '\t');
-        dlmwrite(pic.back_image_filename, part2,'delimiter', '\t');
-        dlmwrite(pic.noise_image_filename, part3,'delimiter', '\t');
         
-        %Crappy way to store metadata, but we'll hopefully ditch this whole
-        %program anyway
-        metadata_filename=strrep(pic.raw_image_filename,'_raw.ascii','_metadata.tsv');
-        struct_to_tsv(image_instance_data,metadata_filename)
+        %Generate file names for saving
+        prefix=[savingname,'_',num2str(SNumber+n-1)];
+        prefix=fullfile(saving_path,prefix);
+        raw_image_filename=[prefix,'_raw.ascii'];
+        back_image_filename=[prefix,'_back.ascii'];
+        noise_image_filename=[prefix,'_noise.ascii'];
+        metadata_filename=[prefix,'_metadata.tsv'];
+        
+        %Save the data
+        dlmwrite(raw_image_filename, part1,'delimiter', '\t');
+        dlmwrite(back_image_filename, part2,'delimiter', '\t');
+        dlmwrite(noise_image_filename, part3,'delimiter', '\t');
+        struct_to_tsv(image_instance_data,metadata_filename);
+        
         
 %         temppart=-1*log(abs(part1-part3)./abs(part2-part3));
         
