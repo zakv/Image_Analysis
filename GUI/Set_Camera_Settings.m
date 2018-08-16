@@ -92,7 +92,8 @@ temp=clock;
 hostname=strtrim(hostname);
 if strcmp(hostname,'waveguide4');
     %handles.saving_path=sprintf('D:\\Matlab_Pixelfly_USB_07102014\\%4d%02d%02d',temp(1:3));
-    handles.saving_path=sprintf('C:\\Matlab_Pixelfly_USB_07102014\\%4d%02d%02d',temp(1:3));
+    %handles.saving_path=sprintf('C:\\Matlab_Pixelfly_USB_07102014\\%4d%02d%02d',temp(1:3));
+    handles.saving_path=sprintf('D:\\Rb_Lab_Camera_Computer_Data\\%4d%02d%02d',temp(1:3));
 else
     handles.saving_path=sprintf('F:\\Matlab_Pixelfly_USB_07102014\\%4d%02d%02d',temp(1:3));
 end
