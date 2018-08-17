@@ -1,5 +1,5 @@
 function [ file_list ] = get_recent_back_list_fast( saving_path, max_files )
-%Returns a list of the most recent "*_back.ascii" files in saving_path
+%Returns a list of the most recent "*_back.png" files in saving_path
 %   === Inputs ===
 %   saving_path should be a string that specifies the directory in which to
 %   look for the background image files.
@@ -30,7 +30,7 @@ function [ file_list ] = get_recent_back_list_fast( saving_path, max_files )
 %   >> file_list = get_recent_file_list(saving_path, max_files);
 
 %First get the struct array of back files from dir
-dir_string=fullfile(saving_path,'*_back.ascii');
+dir_string=fullfile(saving_path,'*_back.png');
 file_list=dir(dir_string);
 
 %Extract the modification times for sorting

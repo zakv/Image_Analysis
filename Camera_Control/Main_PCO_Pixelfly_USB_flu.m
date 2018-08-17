@@ -546,9 +546,12 @@ for n=1:imacount
         end
         %total_image1=double(total_image1) + double(result_image1');
         %total_image2=double(total_image2) + double(result_image2');
-        part1=double(result_image1');
-        part2=double(result_image2');
-        part3=double(result_image3');
+%         part1=double(result_image1');
+%         part2=double(result_image2');
+%         part3=double(result_image3');
+        part1=result_image1';
+        part2=result_image2';
+        part3=result_image3';
         rmin=analysis_ROI(1,1);rmax=analysis_ROI(1,2);
         cmin=analysis_ROI(2,1);cmax=analysis_ROI(2,2);
         part1=part1(rmin:rmax,cmin:cmax);
@@ -558,15 +561,22 @@ for n=1:imacount
         %Generate file names for saving
         prefix=[savingname,'_',num2str(SNumber+n-1)];
         prefix=fullfile(saving_path,prefix);
-        raw_image_filename=[prefix,'_raw.ascii'];
-        back_image_filename=[prefix,'_back.ascii'];
-        noise_image_filename=[prefix,'_noise.ascii'];
+%         raw_image_filename=[prefix,'_raw.ascii'];
+%         back_image_filename=[prefix,'_back.ascii'];
+%         noise_image_filename=[prefix,'_noise.ascii'];
+%         metadata_filename=[prefix,'_metadata.tsv'];
+        raw_image_filename=[prefix,'_raw.png'];
+        back_image_filename=[prefix,'_back.png'];
+        noise_image_filename=[prefix,'_noise.png'];
         metadata_filename=[prefix,'_metadata.tsv'];
         
         %Save the data
-        dlmwrite(raw_image_filename, part1,'delimiter', '\t');
-        dlmwrite(back_image_filename, part2,'delimiter', '\t');
-%         dlmwrite(noise_image_filename, part3,'delimiter', '\t');
+%         dlmwrite(raw_image_filename, part1,'delimiter', '\t');
+%         dlmwrite(back_image_filename, part2,'delimiter', '\t');
+%         %dlmwrite(noise_image_filename, part3,'delimiter', '\t');
+        imwrite(part1,raw_image_filename);
+        imwrite(part2,back_image_filename);
+        %imwrite(part2,noise_image_filename);
         struct_to_tsv(image_instance_data,metadata_filename);
         
         
@@ -578,7 +588,8 @@ for n=1:imacount
             load_image('',true); %Throws and error since '' is not a real file name
         catch
         end
-        temppart=quick_back_removal_eig(saving_path,part1,row_min,row_max,col_min,col_max,part2);
+%         temppart=quick_back_removal_eig(saving_path,part1,row_min,row_max,col_min,col_max,part2);
+        temppart=quick_back_removal_eig(saving_path,double(part1),row_min,row_max,col_min,col_max,double(part2));
         %Vendeiro End of new background removal stuff
         
         %temppart=temppart(40:80,40:80);
