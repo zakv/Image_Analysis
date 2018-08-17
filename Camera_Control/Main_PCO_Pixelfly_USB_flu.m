@@ -48,6 +48,7 @@ function Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data)
 %atoms so that region can be ignored.  Specify that region in the
 %line below
 row_min=20; row_max=120; col_min=1; col_max=301; %Region that may have atoms (usual values)
+% row_min=10; row_max=601; col_min=75; col_max=250; %Region that may have atoms (for Stern Gerlach in YS)
 % row_min=20; row_max=100; col_min=1; col_max=1001; %Region that may have atoms (for Stern Gerlach in YS)
 % row_min=20; row_max=301; col_min=75; col_max=225; %Region that may have atoms (for Stern Gerlach)
 % row_min=20; row_max=471; col_min=75; col_max=225; %Region that may have atoms (for long TOF Stern Gerlach)
@@ -63,6 +64,7 @@ OD_colorbar_range=[-0.1,0.5]*1.2;
 %Set region of interest for analysis [row_min,row_max;col_min,col_max]
 %(Note semicolon between row and columns indices)
 analysis_ROI=[470,640;546,846]; %Usual values
+% analysis_ROI=[440,1040;546,846]; % (for long TOF adiabatic release)
 % analysis_ROI=[470,590;200,1200]; % (for Stern Gerlach in YS)
 % analysis_ROI=[470,770;546,846]; % (for Stern Gerlach)
 % analysis_ROI=[470,940;546,846]; % (for long TOF Stern Gerlach)
