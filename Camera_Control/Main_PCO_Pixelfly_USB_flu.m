@@ -336,7 +336,9 @@ if (VB==2)&&(HB==2)&&(SF==0)
 end
 
 %here is the loop
-for n=1:imacount
+n=1;
+while n<=imacount
+    timed_out=false;
     %save_file1=sprintf('image%04d-%04d-%02d-%02d-%02d-%02d-%2.2g.tif',n,clock);
     %save_file3=sprintf('Double-minus-image%04d-%04d-%02d-%02d-%02d-%02d-%2.2g.ascii',n,clock);
     save_file4=sprintf('Raw1-image%04d-%04d-%02d-%02d-%02d-%02d-%2.2g.ascii',n,clock);
@@ -401,6 +403,7 @@ for n=1:imacount
         if(a>500)
             disp('timeout in waiting for images');   
             errorCode=1;
+            timed_out=true;
         end
     end
 
@@ -470,7 +473,7 @@ for n=1:imacount
     if (twoimage==1)
         dwValidImageCnt=0;
         a=0;
-        while((dwValidImageCnt<1)&&(errorCode==0))
+        while((dwValidImageCnt<1)&&(errorCode==0)&&(timed_out==false))
             [errorCode,out_ptr,dwValidImageCnt,dwMaxImageCnt]  = calllib('PCO_CAM_SDK', 'PCO_GetNumberOfImagesInSegment', out_ptr,act_segment,dwValidImageCnt,dwMaxImageCnt);
          if(errorCode)
              disp(['PCO_GetNumberOfImagesInSegment failed with error ',num2str(errorCode,'%X')]);   
@@ -481,6 +484,7 @@ for n=1:imacount
            if(a>500)
                 disp('timeout in waiting for images');   
                 errorCode=1;
+                timed_out=true;
            end
         end
 
@@ -505,7 +509,7 @@ for n=1:imacount
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         dwValidImageCnt=0;
         a=0;
-        while((dwValidImageCnt<1)&&(errorCode==0))
+        while((dwValidImageCnt<1)&&(errorCode==0)&&(timed_out==false))
             [errorCode,out_ptr,dwValidImageCnt,dwMaxImageCnt]  = calllib('PCO_CAM_SDK', 'PCO_GetNumberOfImagesInSegment', out_ptr,act_segment,dwValidImageCnt,dwMaxImageCnt);
          if(errorCode)
              disp(['PCO_GetNumberOfImagesInSegment failed with error ',num2str(errorCode,'%X')]);   
@@ -516,6 +520,7 @@ for n=1:imacount
            if(a>500)
                 disp('timeout in waiting for images');   
                 errorCode=1;
+                timed_out=true;
            end
         end
 
@@ -552,6 +557,7 @@ for n=1:imacount
           % dlmwrite(pic.back_image_filename, result_image2','delimiter', '\t');
           % dlmwrite(pic.noise_image_filename, result_image3','delimiter', '\t');
         end
+        if timed_out==false
         %total_image1=double(total_image1) + double(result_image1');
         %total_image2=double(total_image2) + double(result_image2');
 %         part1=double(result_image1');
@@ -770,7 +776,8 @@ for n=1:imacount
                  'VerticalAlignment','Top')
         
         % Urvoy End of new plotting code with direct fitting 20180910
-    end    
+        end
+    end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%For another new picture in the same for sequence.%%%%%%%%
     if (twoimage==0)
@@ -836,7 +843,8 @@ for n=1:imacount
         %figure(4)
         %imagesc(part1back,[0,40000]);colorbar()
        
-    end 
+    end
+    n=n+1;
 end
 
 %save_file700=sprintf('Total-image-%04d-%02d-%02d-%02d-%02d-%2.2g.ascii',clock);
