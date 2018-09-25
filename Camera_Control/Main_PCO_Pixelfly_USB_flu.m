@@ -47,19 +47,26 @@ function Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data)
 %The background removal needs to know which part of the image has
 %atoms so that region can be ignored.  Specify that region in the
 %line below
-row_min=20; row_max=120; col_min=1; col_max=301; %Region that may have atoms (usual values)
-% row_min=10; row_max=601; col_min=75; col_max=250; %Region that may have atoms (for Stern Gerlach in YS)
-% row_min=20; row_max=100; col_min=1; col_max=1001; %Region that may have atoms (for Stern Gerlach in YS)
-% row_min=20; row_max=301; col_min=75; col_max=225; %Region that may have atoms (for Stern Gerlach)
-% row_min=20; row_max=471; col_min=75; col_max=225; %Region that may have atoms (for long TOF Stern Gerlach)
-% row_min=1; row_max=21; col_min=75; col_max=225; %Region that may have atoms (for fine precision aligning X to Y)
-% row_min=10; row_max=40; col_min=1; col_max=81; %Region that may have atoms (for looking at oscillations in crossed ODT)
+%Region that may have atoms
+row_min=10; row_max=120; col_min=1; col_max=301; %(usual values)
+% row_min=10; row_max=601; col_min=75; col_max=250; % (for Stern Gerlach in YS)
+% row_min=20; row_max=100; col_min=1; col_max=1001; % (for Stern Gerlach in YS)
+% row_min=20; row_max=301; col_min=75; col_max=225; % (for Stern Gerlach)
+% row_min=20; row_max=471; col_min=75; col_max=225; % (for long TOF Stern Gerlach)
+% row_min=1; row_max=21; col_min=75; col_max=225; % (for fine precision aligning X to Y)
+% row_min=10; row_max=40; col_min=1; col_max=81; % (for looking at oscillations in crossed ODT)
+% row_min=110; row_max=160; col_min=1; col_max=301; %(Raman Kick Sequence with 9ms TOF)
 
 %Set range for colobar scale of atom OD plot
 OD_colorbar_range=[-0.1,0.5]*1.2;
 % OD_colorbar_range=[-0.1,0.5]*0.5;
 % OD_colorbar_range=[-0.1,2.];
 % OD_colorbar_range=[-0.1,0.4];
+
+% Define constants for the evaluation of the on-the-fly fit
+% Values taken from the M20180807.nb notebook
+tempT = 0.327953;
+ODToAtomNumber = 277.275;
 
 %Set region of interest for analysis [row_min,row_max;col_min,col_max]
 %(Note semicolon between row and columns indices)
@@ -70,6 +77,7 @@ analysis_ROI=[470,640;546,846]; %Usual values
 % analysis_ROI=[470,940;546,846]; % (for long TOF Stern Gerlach)
 % analysis_ROI=[510,530;546,846]; % (for fine precision aligning X to Y)
 % analysis_ROI=[500,550;666,746]; % (for looking at oscillations in crossed ODT)
+% analysis_ROI=[470,640;546,846]; %(Raman Kick Sequence with 9ms TOF)
 
 %unpack data from argument object
 savingname=run_config.namefile;
@@ -592,6 +600,102 @@ for n=1:imacount
         temppart=quick_back_removal_eig(saving_path,double(part1),row_min,row_max,col_min,col_max,double(part2));
         %Vendeiro End of new background removal stuff
         
+        % Urvoy Beginning of on-the-fly fitting
+        hProfile = sum(temppart,1); hProfile = reshape(hProfile,1,[]);
+        vProfile = sum(temppart,2); vProfile = reshape(vProfile,1,[]);
+        
+        % Preparation of the fits
+        gaussian = @(x,xdata)x(3)*exp(-(xdata-x(1)).^2./(2*(x(2)).^2))+x(4);
+        options = optimoptions('lsqcurvefit','Display','off');
+
+        % Moving average smoothing of the profile for the 1st fit
+        windowSize = 5; 
+        b = (1/windowSize)*ones(1,windowSize);
+        a = 1;
+
+        hProfileSmooth = filtfilt(b,a,hProfile);
+        vProfileSmooth = filtfilt(b,a,vProfile); 
+
+        % Determination of the initial guesses for the gaussian fit on the top half of the curve
+        [hmax,himax] = max(hProfileSmooth); [vmax,vimax] = max(vProfileSmooth); % maximum and center of the gaussian
+        hoff = mean(hProfileSmooth([1 end])); voff = mean(vProfileSmooth([1 end])); % offset for the fit
+        hmax = hmax-hoff; vmax = vmax-voff;
+        % indices for the top half of the horizontal cross section defined as the first point that drops below half the peak on each side
+        hi1 = find(hProfileSmooth(1:himax)-hoff<hmax/2,1,'last'); hi2 = (himax-1) + find(hProfileSmooth(himax:end)-hoff<hmax/2,1,'first'); 
+        if isempty(hi1)
+            hi1=1;
+        end
+        if isempty(hi2)
+            hi2=numel(hProfileSmooth);
+        end
+        % indices for the top half of the vertical cross section defined as the first point that drops below half the peak on each side
+        vi1 = find(vProfileSmooth(1:vimax)-voff<vmax/2,1,'last'); vi2 = (vimax-1) + find(vProfileSmooth(vimax:end)-voff<vmax/2,1,'first'); 
+        if isempty(vi1)
+            vi1=1;
+        end
+        if isempty(vi2)
+            vi2=numel(vProfileSmooth);
+        end
+        
+        % Defining upper and lower bounds, and initial guesses for the 1st fit 
+        hub = [ hi2 , numel(hProfileSmooth)/2 , 2*hmax , hoff+1 ]; % upper bounds
+        hlb = [ hi1 , 0 , 0 , hoff ]; % lower bounds
+        h0 = [ himax , abs(hi2-hi1)/2 , hmax-hoff , hoff ]; % initial guesses
+        vub = [ vi2 , numel(vProfileSmooth)/2 , 2*vmax , voff+1 ]; % upper bounds
+        vlb = [ vi1 , 0 , 0 , voff ];  % lower bounds
+        v0 = [ vimax , abs(vi2-vi1)/2 , vmax-voff , voff ]; % initial guesses
+
+        % Perform the 1st fit
+        try 
+            hfit = lsqcurvefit(gaussian,h0,hi1:hi2,hProfileSmooth(hi1:hi2),hlb,hub,options);
+        catch 
+            warning('Problem during the 1st horizontal fit. Assigning the initial guesses.');
+            hfit = h0;
+        end
+        try
+            vfit = lsqcurvefit(gaussian,v0,vi1:vi2,vProfileSmooth(vi1:vi2),vlb,vub,options);
+        catch
+            warning('Problem during the 1st vertical fit. Assigning the initial guesses.');
+            vfit = v0;
+        end
+
+        % Defining upper and lower bounds, and initial guesses for the 2nd fit 
+        hub = [ numel(hProfile) , numel(hProfile) , 2*hmax , max(hProfile) ]; % upper bounds
+        hlb = [ 1 , 0 , 0 , min(hProfile) ]; % lower bounds
+        h0 = hfit; % initial guesses
+        vub = [ numel(vProfile) , numel(vProfile) , 2*vmax , max(vProfile) ]; % upper bounds
+        vlb = [ 1 , 0 , 0 , min(vProfile) ];  % lower bounds
+        v0 = vfit; % initial guesses
+
+        % Perform the 2nd fit
+        vfit = lsqcurvefit(gaussian,v0,1:numel(vProfile),vProfile,vlb,vub,options);
+        try 
+            hfit = lsqcurvefit(gaussian,h0,1:numel(hProfile),hProfile,hlb,hub,options);
+        catch 
+            warning('Problem during the 2nd horizontal fit. Assigning the initial guesses.');
+            hfit = h0;
+        end
+        try
+            vfit = lsqcurvefit(gaussian,v0,1:numel(vProfile),vProfile,vlb,vub,options);
+        catch
+            warning('Problem during the 2nd vertical fit. Assigning the initial guesses.');
+            vfit = v0;
+        end
+        
+        % Defining the text strings with the fit results
+        TOF = getfield(image_instance_data, 'TOF');
+        if isempty(TOF)
+            TOF = 1.5;
+            warning(sprintf('No TOF given in metadata, set by default to %f ms',TOF));
+        end
+        txtFitResults = { sprintf('TOF = %0.1f ms',TOF) , 
+                          sprintf('w_H = %0.1f pix',hfit(2)) , 
+                          sprintf('w_V = %0.1f pix',vfit(2)) , 
+                          sprintf('T_H = %0.2f uK',hfit(2)^2/TOF^2*tempT) , 
+                          sprintf('T_V = %0.2f uK',vfit(2)^2/TOF^2*tempT) 
+                           };
+        % Urvoy End of on-the-fly fitting
+        
         %temppart=temppart(40:80,40:80);
         %figure(2)
         %imagesc(doub2le(result_image2')-double(result_image3'),[0,1100]);colorbar();colormap jet;
@@ -599,17 +703,73 @@ for n=1:imacount
         imagesc(result_image1',[0,7500]);colorbar();colormap jet;
         figure(4)
         imagesc(result_image2',[0,7500]);colorbar();colormap jet;
-        figure(6)
-        imagesc(temppart,OD_colorbar_range);colorbar();
-        back_region=make_back_region(temppart,row_min,row_max,col_min,col_max);
-        atompart=temppart.*(1-back_region); %Image with all pixels in the back region set to 0
-        peak_OD=max(max(atompart));
-        total_OD=sum(sum(atompart));
-        title_string=sprintf('Peak OD is %0.2f \n Integrated OD is %0.2f', peak_OD,total_OD);
-        title(title_string,'FontSize',30);
+%         figure(6)
+%         imagesc(temppart,OD_colorbar_range);colorbar();
+%         back_region=make_back_region(temppart,row_min,row_max,col_min,col_max);
+%         atompart=temppart.*(1-back_region); %Image with all pixels in the back region set to 0
+%         peak_OD=max(max(atompart));
+%         total_OD=sum(sum(atompart));
+%         title_string=sprintf('Peak OD is %0.2f \n Integrated OD is %0.2f', peak_OD,total_OD);
+%         title(title_string,'FontSize',30);
         %imagesc(temppart(40:80,40:80),[-0.5,0.5]);colorbar()
         %figure(2)
         %imagesc(part1-part2,[0,100]);colorbar();colormap jet;
+        
+        % Urvoy Beginning of new plotting code with direct fitting 20180910
+        figure(6),clf
+        back_region=make_back_region(temppart,row_min,row_max,col_min,col_max);
+        atompart=temppart.*(1-back_region); %Image with all pixels in the back region set to 0
+        axBox = [0.1300 0.1100 0.7750 0.75]; imageWidth = .7;
+        pos1 = [ axBox(1)+(1-imageWidth)*axBox(3) axBox(2)+(1-imageWidth)*axBox(4) imageWidth*axBox(3) imageWidth*axBox(4) ];
+        pos2 = [ axBox(1)+(1-imageWidth)*axBox(3) axBox(2) imageWidth*axBox(3) (1-imageWidth)*axBox(4) ];
+        pos3 = [ axBox(1) axBox(2)+(1-imageWidth)*axBox(4) (1-imageWidth)*axBox(3) imageWidth*axBox(4) ];
+        pos4 = [ axBox(1) axBox(2) (1-imageWidth)*axBox(3) (1-imageWidth)*axBox(4) ];
+        
+        axes('Position',axBox,'Visible', 'off')
+        set(get(gca,'Title'),'Visible','on')
+        total_OD=sum(sum(atompart));
+        title_string=sprintf('Integrated OD is %0.2f',total_OD);
+        title(title_string,'FontSize',30),hold on
+        
+        axes('Position',pos1)
+        imagesc(temppart,OD_colorbar_range); hold on
+        plot([ col_min col_min col_max col_max col_min ],[ row_min row_max row_max row_min row_min ],'w')
+        hcb = colorbar('location','east','YAxisLocation','right');
+        poscb = get(hcb,'Position');
+        poscb(1) = pos1(1)+1.02*pos1(3); poscb(3) = poscb(3)/2;
+        poscb(2) = pos1(2); poscb(4) = pos1(4);
+        set(hcb,'Position',poscb);
+        set(gca,'XTickLabel',{},'YTickLabel',{})
+        
+        axes('Position',pos2)
+        plot(1:numel(hProfile),hProfile,1:numel(hProfile),gaussian(hfit,1:numel(hProfile)))
+        xlim([1 numel(hProfile)])
+        hmin = min(hProfile); hmax = max(hProfile);
+        yLims = [ (hmin - 0.1*(hmax-hmin)) (hmax + 0.1*(hmax-hmin)) ];
+        ylim(yLims)
+        hold on
+        plot(col_min*[1 1],yLims,'--k',col_max*[1 1],yLims,'--k')
+        set(gca,'YTickLabel',{})
+        
+        axes('Position',pos3)
+        plot(vProfile,1:numel(vProfile),gaussian(vfit,1:numel(vProfile)),1:numel(vProfile))
+        ylim([1 numel(vProfile)])
+        vmin = min(vProfile); vmax = max(vProfile);
+        xLims = ([ (vmin - 0.1*(vmax-vmin)) (vmax + 0.1*(vmax-vmin)) ]);
+        xlim(xLims)
+        hold on
+        plot(xLims,row_min*[1 1],'--k',xLims,row_max*[1 1],'--k')
+        set(gca,'XTickLabel',{},'YDir','reverse')
+        
+        axes('Position',pos4,'Visible', 'off')
+%         mTextBox = uicontrol('style','text','Position',pos4);
+%         set(mTextBox,'String',[sprintf('%d atoms',round(ODToAtomNumber*total_OD));txtFitResults])
+        text(0,1,[sprintf('%0.2e atoms',round(ODToAtomNumber*total_OD)) ; ... 
+                  txtFitResults], ... 
+                 'HorizontalAlignment','Left', ... 
+                 'VerticalAlignment','Top')
+        
+        % Urvoy End of new plotting code with direct fitting 20180910
     end    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%For another new picture in the same for sequence.%%%%%%%%
