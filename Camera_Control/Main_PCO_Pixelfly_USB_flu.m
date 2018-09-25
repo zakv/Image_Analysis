@@ -361,14 +361,14 @@ while n<=imacount
     end
     
     if(errorCode==0)
-        [errorCode,out_ptr,image_stack1]  = calllib('PCO_CAM_SDK','PCO_GetBuffer',out_ptr,sBufNr,im_ptr,ev_ptr);
+        [errorCode,out_ptr,image_stack]  = calllib('PCO_CAM_SDK','PCO_GetBuffer',out_ptr,sBufNr,im_ptr,ev_ptr);
         if(errorCode)
             disp(['PCO_GetBuffer failed with error ',num2str(errorCode,'%08X')]);
         end
     end
     
     
-    result_image1=image_stack1;
+    result_image1=image_stack;
     
     
     
@@ -442,14 +442,14 @@ while n<=imacount
             end
             
             if(errorCode==0)
-                [errorCode,out_ptr,image_stack2]  = calllib('PCO_CAM_SDK','PCO_GetBuffer',out_ptr,sBufNr,im_ptr,ev_ptr);
+                [errorCode,out_ptr,image_stack]  = calllib('PCO_CAM_SDK','PCO_GetBuffer',out_ptr,sBufNr,im_ptr,ev_ptr);
                 if(errorCode)
                     disp(['PCO_GetBuffer failed with error ',num2str(errorCode,'%08X')]);
                 end
             end
             
             
-            result_image2=image_stack2;
+            result_image2=image_stack;
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %Third image for this shot
@@ -481,14 +481,14 @@ while n<=imacount
             end
             
             if(errorCode==0)
-                [errorCode,out_ptr,image_stack3]  = calllib('PCO_CAM_SDK','PCO_GetBuffer',out_ptr,sBufNr,im_ptr,ev_ptr);
+                [errorCode,out_ptr,image_stack]  = calllib('PCO_CAM_SDK','PCO_GetBuffer',out_ptr,sBufNr,im_ptr,ev_ptr);
                 if(errorCode)
                     disp(['PCO_GetBuffer failed with error ',num2str(errorCode,'%08X')]);
                 end
             end
             
             
-            result_image3=image_stack3;
+            result_image3=image_stack;
         end
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
