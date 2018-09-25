@@ -332,7 +332,9 @@ n=1;
 while n<=imacount
     timed_out=false;    
     
+    %First image for this shot
     dwValidImageCnt=0;
+    errorCode=0;
     a=0;
     while((dwValidImageCnt<1)&&(errorCode==0))
         [errorCode,out_ptr,dwValidImageCnt,dwMaxImageCnt]  = calllib('PCO_CAM_SDK', 'PCO_GetNumberOfImagesInSegment', out_ptr,act_segment,dwValidImageCnt,dwMaxImageCnt);
@@ -410,77 +412,84 @@ while n<=imacount
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%For another new picture in the same for sequence.%%%%%%%%
     if (twoimage==1)
-        dwValidImageCnt=0;
-        a=0;
-        while((dwValidImageCnt<1)&&(errorCode==0)&&(timed_out==false))
-            [errorCode,out_ptr,dwValidImageCnt,dwMaxImageCnt]  = calllib('PCO_CAM_SDK', 'PCO_GetNumberOfImagesInSegment', out_ptr,act_segment,dwValidImageCnt,dwMaxImageCnt);
-            if(errorCode)
-                disp(['PCO_GetNumberOfImagesInSegment failed with error ',num2str(errorCode,'%X')]);
+        %Second image for this shot
+        if timed_out==false
+            dwValidImageCnt=0;
+            errorCode=0;
+            a=0;
+            while((dwValidImageCnt<1)&&(errorCode==0)&&(timed_out==false))
+                [errorCode,out_ptr,dwValidImageCnt,dwMaxImageCnt]  = calllib('PCO_CAM_SDK', 'PCO_GetNumberOfImagesInSegment', out_ptr,act_segment,dwValidImageCnt,dwMaxImageCnt);
+                if(errorCode)
+                    disp(['PCO_GetNumberOfImagesInSegment failed with error ',num2str(errorCode,'%X')]);
+                end
+                % disp(['segment ',int2str(act_segment),':  valid images: ',int2str(dwValidImageCnt),' max images ',int2str(dwMaxImageCnt)]);
+                pause(waittime_s);
+                a=a+1;
+                if(a>500)
+                    disp('timeout in waiting for images');
+                    errorCode=1;
+                    timed_out=true;
+                end
             end
-            % disp(['segment ',int2str(act_segment),':  valid images: ',int2str(dwValidImageCnt),' max images ',int2str(dwMaxImageCnt)]);
-            pause(waittime_s);
-            a=a+1;
-            if(a>500)
-                disp('timeout in waiting for images');
-                errorCode=1;
-                timed_out=true;
+            
+            if(errorCode==0)
+                [errorCode,out_ptr]  = calllib('PCO_CAM_SDK','PCO_GetImageEx',out_ptr,act_segment,0,0,sBufNr,strSegment.wXRes,strSegment.wYRes,bitpix);
+                if(errorCode)
+                    disp(['PCO_GetImageEx failed with error ',num2str(errorCode,'%08X')]);
+                else
+                    disp(['PCO_GetImageEx image ' int2str(n) ' done']);
+                end
             end
+            
+            if(errorCode==0)
+                [errorCode,out_ptr,image_stack2]  = calllib('PCO_CAM_SDK','PCO_GetBuffer',out_ptr,sBufNr,im_ptr,ev_ptr);
+                if(errorCode)
+                    disp(['PCO_GetBuffer failed with error ',num2str(errorCode,'%08X')]);
+                end
+            end
+            
+            
+            result_image2=image_stack2;
         end
-        
-        if(errorCode==0)
-            [errorCode,out_ptr]  = calllib('PCO_CAM_SDK','PCO_GetImageEx',out_ptr,act_segment,0,0,sBufNr,strSegment.wXRes,strSegment.wYRes,bitpix);
-            if(errorCode)
-                disp(['PCO_GetImageEx failed with error ',num2str(errorCode,'%08X')]);
-            else
-                disp(['PCO_GetImageEx image ' int2str(n) ' done']);
-            end
-        end
-        
-        if(errorCode==0)
-            [errorCode,out_ptr,image_stack2]  = calllib('PCO_CAM_SDK','PCO_GetBuffer',out_ptr,sBufNr,im_ptr,ev_ptr);
-            if(errorCode)
-                disp(['PCO_GetBuffer failed with error ',num2str(errorCode,'%08X')]);
-            end
-        end
-        
-        
-        result_image2=image_stack2;
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        dwValidImageCnt=0;
-        a=0;
-        while((dwValidImageCnt<1)&&(errorCode==0)&&(timed_out==false))
-            [errorCode,out_ptr,dwValidImageCnt,dwMaxImageCnt]  = calllib('PCO_CAM_SDK', 'PCO_GetNumberOfImagesInSegment', out_ptr,act_segment,dwValidImageCnt,dwMaxImageCnt);
-            if(errorCode)
-                disp(['PCO_GetNumberOfImagesInSegment failed with error ',num2str(errorCode,'%X')]);
+        %Third image for this shot
+        if timed_out==false
+            dwValidImageCnt=0;
+            a=0;
+            while((dwValidImageCnt<1)&&(errorCode==0))
+                [errorCode,out_ptr,dwValidImageCnt,dwMaxImageCnt]  = calllib('PCO_CAM_SDK', 'PCO_GetNumberOfImagesInSegment', out_ptr,act_segment,dwValidImageCnt,dwMaxImageCnt);
+                if(errorCode)
+                    disp(['PCO_GetNumberOfImagesInSegment failed with error ',num2str(errorCode,'%X')]);
+                end
+                % disp(['segment ',int2str(act_segment),':  valid images: ',int2str(dwValidImageCnt),' max images ',int2str(dwMaxImageCnt)]);
+                pause(waittime_s);
+                a=a+1;
+                if(a>500)
+                    disp('timeout in waiting for images');
+                    errorCode=1;
+                    timed_out=true;
+                end
             end
-            % disp(['segment ',int2str(act_segment),':  valid images: ',int2str(dwValidImageCnt),' max images ',int2str(dwMaxImageCnt)]);
-            pause(waittime_s);
-            a=a+1;
-            if(a>500)
-                disp('timeout in waiting for images');
-                errorCode=1;
-                timed_out=true;
+            
+            if(errorCode==0)
+                [errorCode,out_ptr]  = calllib('PCO_CAM_SDK','PCO_GetImageEx',out_ptr,act_segment,0,0,sBufNr,strSegment.wXRes,strSegment.wYRes,bitpix);
+                if(errorCode)
+                    disp(['PCO_GetImageEx failed with error ',num2str(errorCode,'%08X')]);
+                else
+                    disp(['PCO_GetImageEx image ' int2str(n) ' done']);
+                end
             end
+            
+            if(errorCode==0)
+                [errorCode,out_ptr,image_stack3]  = calllib('PCO_CAM_SDK','PCO_GetBuffer',out_ptr,sBufNr,im_ptr,ev_ptr);
+                if(errorCode)
+                    disp(['PCO_GetBuffer failed with error ',num2str(errorCode,'%08X')]);
+                end
+            end
+            
+            
+            result_image3=image_stack3;
         end
-        
-        if(errorCode==0)
-            [errorCode,out_ptr]  = calllib('PCO_CAM_SDK','PCO_GetImageEx',out_ptr,act_segment,0,0,sBufNr,strSegment.wXRes,strSegment.wYRes,bitpix);
-            if(errorCode)
-                disp(['PCO_GetImageEx failed with error ',num2str(errorCode,'%08X')]);
-            else
-                disp(['PCO_GetImageEx image ' int2str(n) ' done']);
-            end
-        end
-        
-        if(errorCode==0)
-            [errorCode,out_ptr,image_stack3]  = calllib('PCO_CAM_SDK','PCO_GetBuffer',out_ptr,sBufNr,im_ptr,ev_ptr);
-            if(errorCode)
-                disp(['PCO_GetBuffer failed with error ',num2str(errorCode,'%08X')]);
-            end
-        end
-        
-        
-        result_image3=image_stack3;
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if timed_out==false
