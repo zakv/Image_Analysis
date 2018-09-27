@@ -444,6 +444,8 @@ switch str{val}
         handles.sensor_format=1;
     case '1392*1040'
         handles.sensor_format=0;
+    otherwise
+        disp('did not match');
 end
 guidata(hObject,handles);
 
