@@ -56,6 +56,7 @@ row_min=10; row_max=120; col_min=1; col_max=301; %(usual values)
 % row_min=1; row_max=21; col_min=75; col_max=225; % (for fine precision aligning X to Y)
 % row_min=10; row_max=40; col_min=1; col_max=81; % (for looking at oscillations in crossed ODT)
 % row_min=110; row_max=160; col_min=1; col_max=301; %(Raman Kick Sequence with 9ms TOF)
+% row_min=1; row_max=501; col_min=1; col_max=501; % Imaging the cMOT
 
 %Set range for colobar scale of atom OD plot
 OD_colorbar_range=[-0.1,0.5]*1.2;
@@ -78,6 +79,7 @@ analysis_ROI=[470,640;546,846]; %Usual values
 % analysis_ROI=[510,530;546,846]; % (for fine precision aligning X to Y)
 % analysis_ROI=[500,550;666,746]; % (for looking at oscillations in crossed ODT)
 % analysis_ROI=[470,640;546,846]; %(Raman Kick Sequence with 9ms TOF)
+% analysis_ROI=[250,750;500,1000]; % Imaging the cMOT
 
 %unpack data from argument object
 savingname=run_config.namefile;
