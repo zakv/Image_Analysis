@@ -48,15 +48,16 @@ function Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data)
 %atoms so that region can be ignored.  Specify that region in the
 %line below
 %Region that may have atoms
-row_min=10; row_max=120; col_min=1; col_max=301; %(usual values)
-% row_min=10; row_max=601; col_min=75; col_max=250; % (for Stern Gerlach in YS)
-% row_min=20; row_max=100; col_min=1; col_max=1001; % (for Stern Gerlach in YS)
-% row_min=20; row_max=301; col_min=75; col_max=225; % (for Stern Gerlach)
-% row_min=20; row_max=471; col_min=75; col_max=225; % (for long TOF Stern Gerlach)
-% row_min=1; row_max=21; col_min=75; col_max=225; % (for fine precision aligning X to Y)
-% row_min=10; row_max=40; col_min=1; col_max=81; % (for looking at oscillations in crossed ODT)
-% row_min=110; row_max=160; col_min=1; col_max=301; %(Raman Kick Sequence with 9ms TOF)
-% row_min=1; row_max=501; col_min=1; col_max=501; % Imaging the cMOT
+row_min=10; row_max=120; col_min=1; col_max=301; % usual values
+% row_min=10; row_max=601; col_min=75; col_max=250; % for Stern Gerlach in YS
+% row_min=20; row_max=100; col_min=1; col_max=1001; % for Stern Gerlach in YS
+% row_min=20; row_max=301; col_min=75; col_max=225; % for Stern Gerlach
+% row_min=20; row_max=471; col_min=75; col_max=225; % for long TOF Stern Gerlach
+% row_min=1; row_max=21; col_min=75; col_max=225; % for fine precision aligning X to Y
+% row_min=10; row_max=40; col_min=1; col_max=81; % for looking at oscillations in crossed ODT
+% row_min=110; row_max=160; col_min=1; col_max=301; % for Raman Kick Sequence with 9ms TOF
+% row_min=1; row_max=501; col_min=1; col_max=501; % for Imaging the cMOT
+% row_min=20; row_max=40; col_min=1; col_max=1392; % for Imaging full length to Y beams
 
 %Set range for colobar scale of atom OD plot
 OD_colorbar_range=[-0.1,0.5]*1.2;
@@ -71,15 +72,16 @@ ODToAtomNumber = 277.275;
 
 %Set region of interest for analysis [row_min,row_max;col_min,col_max]
 %(Note semicolon between row and columns indices)
-analysis_ROI=[470,640;546,846]; %Usual values
-% analysis_ROI=[440,1040;546,846]; % (for long TOF adiabatic release)
-% analysis_ROI=[470,590;200,1200]; % (for Stern Gerlach in YS)
-% analysis_ROI=[470,770;546,846]; % (for Stern Gerlach)
-% analysis_ROI=[470,940;546,846]; % (for long TOF Stern Gerlach)
-% analysis_ROI=[510,530;546,846]; % (for fine precision aligning X to Y)
-% analysis_ROI=[500,550;666,746]; % (for looking at oscillations in crossed ODT)
-% analysis_ROI=[470,640;546,846]; %(Raman Kick Sequence with 9ms TOF)
-% analysis_ROI=[250,750;500,1000]; % Imaging the cMOT
+analysis_ROI=[470,640;546,846]; % usual values
+% analysis_ROI=[440,1040;546,846]; % for long TOF adiabatic release
+% analysis_ROI=[470,590;200,1200]; % for Stern Gerlach in YS
+% analysis_ROI=[470,770;546,846]; % for Stern Gerlach
+% analysis_ROI=[470,940;546,846]; % for long TOF Stern Gerlach
+% analysis_ROI=[510,530;546,846]; % for fine precision aligning X to Y
+% analysis_ROI=[500,550;666,746]; % for looking at oscillations in crossed ODT
+% analysis_ROI=[470,640;546,846]; % for Raman Kick Sequence with 9ms TOF
+% analysis_ROI=[250,750;500,1000]; % for Imaging the cMOT
+% analysis_ROI=[500,560;1,1392]; % for Imaging full length to Y beams
 
 %unpack data from argument object
 savingname=run_config.namefile;
