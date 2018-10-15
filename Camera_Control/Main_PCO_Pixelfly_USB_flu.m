@@ -613,7 +613,7 @@ while n<=imacount
             
             % Defining the text strings with the fit results
             TOF = getfield(image_instance_data, 'TOF');
-            if isempty(TOF) || isnan(str2double(TOF))
+            if isempty(TOF) || ischar(TOF)
                 %isnan(str2double(TOF)) is necessary for when TOF is
                 %ramped, e.g. '1To10Steps10'
                 TOF = 1.5;
