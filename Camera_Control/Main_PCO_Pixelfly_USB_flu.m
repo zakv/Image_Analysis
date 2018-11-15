@@ -48,16 +48,22 @@ function Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data)
 %atoms so that region can be ignored.  Specify that region in the
 %line below
 %Region that may have atoms
-row_min=10; row_max=120; col_min=1; col_max=301; % usual values
+row_min=10; row_max=120; col_min=50; col_max=280; % usual values
+% row_min=35; row_max=65; col_min=170; col_max=200; % TEMPORARY for in situ (feel free to delete)
+% row_min=40; row_max=100; col_min=150; col_max=220; % TEMPORARY for 5ms TOF (feel free to delete)
+% row_min=100; row_max=150; col_min=150; col_max=220; % TEMPORARY for 9ms TOF (feel free to delete)
+% row_min=50; row_max=500; col_min=100; col_max=250; % for long TOF adiabatic release
+% row_min=30; row_max=250; col_min=30; col_max=120; % for long TOF of cold clouds
 % row_min=10; row_max=601; col_min=75; col_max=250; % for Stern Gerlach in YS
 % row_min=20; row_max=100; col_min=1; col_max=1001; % for Stern Gerlach in YS
-% row_min=20; row_max=301; col_min=75; col_max=225; % for Stern Gerlach
+% row_min=20; row_max=250; col_min=125; col_max=250; % for Stern Gerlach
 % row_min=20; row_max=471; col_min=75; col_max=225; % for long TOF Stern Gerlach
 % row_min=1; row_max=21; col_min=75; col_max=225; % for fine precision aligning X to Y
 % row_min=10; row_max=40; col_min=1; col_max=81; % for looking at oscillations in crossed ODT
 % row_min=110; row_max=160; col_min=1; col_max=301; % for Raman Kick Sequence with 9ms TOF
 % row_min=1; row_max=501; col_min=1; col_max=501; % for Imaging the cMOT
-% row_min=20; row_max=40; col_min=1; col_max=1392; % for Imaging full length to Y beams
+% row_min=10; row_max=40; col_min=1; col_max=1392; % for Imaging full length to Y beams
+% row_min=10; row_max=200; col_min=50; col_max=250; % for 301x301 pixel square
 
 %Set range for colobar scale of atom OD plot
 OD_colorbar_range=[-0.1,0.5]*1.2;
@@ -74,14 +80,16 @@ ODToAtomNumber = 277.275;
 %(Note semicolon between row and columns indices)
 analysis_ROI=[470,640;546,846]; % usual values
 % analysis_ROI=[440,1040;546,846]; % for long TOF adiabatic release
-% analysis_ROI=[470,590;200,1200]; % for Stern Gerlach in YS
-% analysis_ROI=[470,770;546,846]; % for Stern Gerlach
+% analysis_ROI=[470,770;646,796]; % for long TOF of cold clouds
+% % analysis_ROI=[470,590;200,1200]; % for Stern Gerlach in YS
+% analysis_ROI=[470,770;5469846]; % for Stern Gerlach
 % analysis_ROI=[470,940;546,846]; % for long TOF Stern Gerlach
 % analysis_ROI=[510,530;546,846]; % for fine precision aligning X to Y
 % analysis_ROI=[500,550;666,746]; % for looking at oscillations in crossed ODT
 % analysis_ROI=[470,640;546,846]; % for Raman Kick Sequence with 9ms TOF
 % analysis_ROI=[250,750;500,1000]; % for Imaging the cMOT
 % analysis_ROI=[500,560;1,1392]; % for Imaging full length to Y beams
+% analysis_ROI=[470,770;585,885]; % for 301x301 pixel square
 
 %unpack data from argument object
 savingname=run_config.namefile;
@@ -529,9 +537,32 @@ while n<=imacount
             temppart=quick_back_removal_eig(saving_path,double(part1),row_min,row_max,col_min,col_max,double(part2));
             %Vendeiro End of new background removal stuff
             
+            %Urvoy slightly less hacky way of making cross sections only
+            %integrate atom region (integrating over the atom region but 
+            %showing the full curve)
+            back_region = make_back_region(temppart,row_min,row_max,col_min,col_max);
+            image_zeroed_background = temppart(not(logical(back_region(:)))); 
+            image_zeroed_background = reshape(image_zeroed_background,row_max-row_min+1,[]);
+            hProfile = sum(image_zeroed_background,1); hProfile = reshape(hProfile,1,[]);
+            vProfile = sum(image_zeroed_background,2); vProfile = reshape(vProfile,1,[]);
+
+            %Urvoy slightly less hacky way of making cross sections only
+            %integrate atom region (integrating over the atom region but 
+            %showing the full curve)
+%             back_region = make_back_region(temppart,row_min,row_max,col_min,col_max);
+%             hProfile = sum(temppart(row_min:row_max,:),1); hProfile = reshape(hProfile,1,[]);
+%             vProfile = sum(temppart(:,col_min:col_max),2); vProfile = reshape(vProfile,1,[]);
+            
+            %Vendeiro hacky way of making cross sections only integrate
+            %atom region
+%             back_region = make_back_region(temppart,row_min,row_max,col_min,col_max);
+%             image_zeroed_background = (1-back_region).*temppart;
+%             hProfile = sum(image_zeroed_background,1); hProfile = reshape(hProfile,1,[]);
+%             vProfile = sum(image_zeroed_background,2); vProfile = reshape(vProfile,1,[]);
+            
             % Urvoy Beginning of on-the-fly fitting
-            hProfile = sum(temppart,1); hProfile = reshape(hProfile,1,[]);
-            vProfile = sum(temppart,2); vProfile = reshape(vProfile,1,[]);
+%             hProfile = sum(temppart,1); hProfile = reshape(hProfile,1,[]);
+%             vProfile = sum(temppart,2); vProfile = reshape(vProfile,1,[]);
             
             % Preparation of the fits
             gaussian = @(x,xdata)x(3)*exp(-(xdata-x(1)).^2./(2*(x(2)).^2))+x(4);
@@ -662,8 +693,8 @@ while n<=imacount
             set(gca,'XTickLabel',{},'YTickLabel',{})
             
             axes('Position',pos2)
-            plot(1:numel(hProfile),hProfile,1:numel(hProfile),gaussian(hfit,1:numel(hProfile)))
-            xlim([1 numel(hProfile)])
+            plot(col_min:col_max,hProfile,col_min:col_max,gaussian(hfit,1:numel(hProfile)))
+            xlim([1 size(temppart,2)])
             hmin = min(hProfile); hmax = max(hProfile);
             yLims = [ (hmin - 0.1*(hmax-hmin)) (hmax + 0.1*(hmax-hmin)) ];
             ylim(yLims)
@@ -672,8 +703,8 @@ while n<=imacount
             set(gca,'YTickLabel',{})
             
             axes('Position',pos3)
-            plot(vProfile,1:numel(vProfile),gaussian(vfit,1:numel(vProfile)),1:numel(vProfile))
-            ylim([1 numel(vProfile)])
+            plot(vProfile,row_min:row_max,gaussian(vfit,1:numel(vProfile)),row_min:row_max)
+            ylim([1 size(temppart,1)])
             vmin = min(vProfile); vmax = max(vProfile);
             xLims = ([ (vmin - 0.1*(vmax-vmin)) (vmax + 0.1*(vmax-vmin)) ]);
             xlim(xLims)
