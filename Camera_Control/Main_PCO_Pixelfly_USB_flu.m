@@ -51,7 +51,8 @@ function Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data)
 row_min=10; row_max=120; col_min=50; col_max=280; % usual values
 % row_min=35; row_max=65; col_min=170; col_max=200; % TEMPORARY for in situ (feel free to delete)
 % row_min=40; row_max=100; col_min=150; col_max=220; % TEMPORARY for 5ms TOF (feel free to delete)
-% row_min=100; row_max=150; col_min=150; col_max=220; % TEMPORARY for 9ms TOF (feel free to delete)
+% row_min=60; row_max=190; col_min=125; col_max=250; % for 9ms TOF
+% row_min=10; row_max=50; col_min=10; col_max=70; % TEMPORARY for PSF (feel free to delete)
 % row_min=50; row_max=500; col_min=100; col_max=250; % for long TOF adiabatic release
 % row_min=30; row_max=250; col_min=30; col_max=120; % for long TOF of cold clouds
 % row_min=10; row_max=601; col_min=75; col_max=250; % for Stern Gerlach in YS
@@ -79,9 +80,11 @@ ODToAtomNumber = 277.275;
 %Set region of interest for analysis [row_min,row_max;col_min,col_max]
 %(Note semicolon between row and columns indices)
 analysis_ROI=[470,640;546,846]; % usual values
+% analysis_ROI=[490,550;696,776]; % TEMPORARY for PSF (feel free to delete)
+% analysis_ROI=[470,770;546,846]; % for 9ms TOF
 % analysis_ROI=[440,1040;546,846]; % for long TOF adiabatic release
 % analysis_ROI=[470,770;646,796]; % for long TOF of cold clouds
-% % analysis_ROI=[470,590;200,1200]; % for Stern Gerlach in YS
+% analysis_ROI=[470,590;200,1200]; % for Stern Gerlach in YS
 % analysis_ROI=[470,770;5469846]; % for Stern Gerlach
 % analysis_ROI=[470,940;546,846]; % for long TOF Stern Gerlach
 % analysis_ROI=[510,530;546,846]; % for fine precision aligning X to Y
