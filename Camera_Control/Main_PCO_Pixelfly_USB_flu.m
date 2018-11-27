@@ -517,6 +517,10 @@ while n<=imacount
             part2=part2(rmin:rmax,cmin:cmax);
             part3=part3(rmin:rmax,cmin:cmax);
             
+            %Subtract noise image on the fly
+            part1=part1-part3;
+            part2=part2-part3;
+            
             %Generate file names for saving
             prefix=[savingname,'_',num2str(SNumber+n-1)];
             prefix=fullfile(saving_path,prefix);
@@ -528,7 +532,7 @@ while n<=imacount
             %Save the data
             imwrite(part1,raw_image_filename);
             imwrite(part2,back_image_filename);
-            %imwrite(part2,noise_image_filename);
+            %imwrite(part3,noise_image_filename);
             struct_to_tsv(image_instance_data,metadata_filename);
             
             %Vendeiro New background removal stuff as of July 5th 2017
