@@ -354,7 +354,8 @@ end
 if handles.absorption_or_fluorescence==1
     %Absorption image
     Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data);
-%     Main_PCO_Pixelfly_USB_flu_Synth_Ramp(run_config,image_instance_data); %For detuning scan
+%     Main_PCO_Pixelfly_USB_flu_Synth_Ramp(run_config,image_instance_data); %For detuning scan with NI USB-GPIB Adapter
+%     Main_PCO_Pixelfly_USB_flu_Synth_Ramp_v2_Prologix(run_config,image_instance_data); %For detuning scan with Prologix USB-GPIB adapter
 elseif handles.absorption_or_fluorescence==2
     %Fluorescence image
     Main_PCO_Pixelfly_USB_flu1110_TwoImagesTrap(run_config,image_instance_data);
