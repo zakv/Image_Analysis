@@ -47,14 +47,82 @@ function Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data)
 %Set the frequency ramp parameters
 n_warmups=1; %Number of shots to take before starting to ramp the frequencies
 n_shots_per_freq=2; %Number of shots to take at each frequency
-frequency_list=1553:5:1563; %Frequencies to set the synth to in order, in MHz
+frequency_list=linspace(1753,1353,41); %Frequencies to set the synth to in order, in MHz
+
+
+%Settings used in large pump/flip/pump detuning scan:
+% frequency_list=linspace(15219,13219,201); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(13329,9219,412); %Frequencies to set the synth to in order, in MHz
+
+% frequency_list=linspace(15219,14229,100); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(14219,13509,72); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(13499,13229,28); %Frequencies to set the synth to in order, in MHz
+
+% frequency_list=linspace(13219,12729,50); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(12719,12229,50); %Frequencies to set the synth to in order, in MHz
+
+% frequency_list=linspace(12219,11729,50); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(11719,11229,50); %Frequencies to set the synth to in order, in MHz
+
+% frequency_list=linspace(11219,10729,50); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(10719,10229,50); %Frequencies to set the synth to in order, in MHz
+
+% frequency_list=linspace(10219,9729,50); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(9719,9229,50); %Frequencies to set the synth to in order, in MHz
+
+% frequency_list=linspace(9219,8729,50); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(8719,8229,50); %Frequencies to set the synth to in order, in MHz
+
+% frequency_list=linspace(8219,7729,50); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(7719,7229,50); %Frequencies to set the synth to in order, in MHz
+
+% frequency_list=linspace(7219,6729,50)-3036; %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(6719,6229,50)-3036; %Frequencies to set the synth to in order, in MHz
+
+% frequency_list=linspace(6219,5729,50); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(5719,5229,50); %Frequencies to set the synth to in order, in MHz
+
+% frequency_list=linspace(5219,4729,50); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(4719,4229,50); %Frequencies to set the synth to in order, in MHz
+
+% frequency_list=linspace(4219,3729,50); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(3719,3229,50); %Frequencies to set the synth to in order, in MHz
+
+% frequency_list=linspace(3219,2729,50); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(2719,2229,50); %Frequencies to set the synth to in order, in MHz
+
+% frequency_list=linspace(2219,2009,22); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(1999,1229,78); %Frequencies to set the synth to in order, in MHz
+
+% frequency_list=linspace(1219,729,50); %Frequencies to set the synth to in order, in MHz
+
+
+
+% frequency_list=linspace(2317,2807,50); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(2817,3307,50); %Frequencies to set the synth to in order, in MHz
+
+% frequency_list=linspace(3317,3807,50); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(3817,4307,50); %Frequencies to set the synth to in order, in MHz
+
+% frequency_list=linspace(4317,4807,50); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(4817,5307,50); %Frequencies to set the synth to in order, in MHz
+
+% frequency_list=linspace(5317,5807,50); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(5817,6307,50); %Frequencies to set the synth to in order, in MHz
+
+
+
+% frequency_list=linspace(3281,3771,50); %Frequencies to set the synth to in order, in MHz
+
 
 %Configure GPIB parameters
 com_port='COM5'; %COM Port for prologix USB-GPIB adapter (run "mode" in windows command prompt to find it)
 GPIB_address=10; %GPIB address of synthesizer
 %Close any existing connections to that GPIB device so we can open a new one
 existing_connections = instrfind('Port',com_port);
-fclose(existing_connections);
+if ~isempty(existing_connections)
+    fclose(existing_connections);
+end
 %Open the new connection
 sport = serial(com_port);
 sport.Terminator = 'CR/LF';
