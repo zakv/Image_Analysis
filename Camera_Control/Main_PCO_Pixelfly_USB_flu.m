@@ -47,11 +47,17 @@ function Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data)
 %The background removal needs to know which part of the image has
 %atoms so that region can be ignored.  Specify that region in the
 %line below
-%Region that may have atoms
+% %Region that may have atoms
 row_min=10; row_max=120; col_min=50; col_max=280; % usual values
+% row_min=35; row_max=75; col_min=125; col_max=230; % TEMPORARY for Pump/Flip/Pump... scan 1.5ms TOF
 % row_min=35; row_max=65; col_min=170; col_max=200; % TEMPORARY for in situ (feel free to delete)
 % row_min=40; row_max=100; col_min=150; col_max=220; % TEMPORARY for 5ms TOF (feel free to delete)
+% row_min=70; row_max=120; col_min=150; col_max=225; % TEMPORARY for 7ms TOF (feel free to delete)
+% row_min=90; row_max=155; col_min=150; col_max=220; % TEMPORARY for 9ms TOF (feel free to delete)
 % row_min=60; row_max=190; col_min=125; col_max=250; % for 9ms TOF
+% row_min=10; row_max=200; col_min=75; col_max=275; % for in situ to 9ms TOF Scan
+% row_min=10; row_max=250; col_min=75; col_max=275; % TEMPORARY for ODToAtomNumber calibration
+% row_min=10; row_max=250; col_min=75; col_max=275; % TEMPORARY for ODToAtomNumber calibration Round 2
 % row_min=10; row_max=50; col_min=10; col_max=70; % TEMPORARY for PSF (feel free to delete)
 % row_min=50; row_max=500; col_min=100; col_max=250; % for long TOF adiabatic release
 % row_min=30; row_max=250; col_min=30; col_max=120; % for long TOF of cold clouds
@@ -65,6 +71,8 @@ row_min=10; row_max=120; col_min=50; col_max=280; % usual values
 % row_min=1; row_max=501; col_min=1; col_max=501; % for Imaging the cMOT
 % row_min=10; row_max=40; col_min=1; col_max=1392; % for Imaging full length to Y beams
 % row_min=10; row_max=200; col_min=50; col_max=250; % for 301x301 pixel square
+% row_min=150; row_max=300; col_min=125; col_max=250; % for 18ms TOF
+row_min=15; row_max=136; col_min=15; col_max=136; % for X2 many shot average %row_min=15; row_max=86; col_min=15; col_max=86;
 
 %Set range for colobar scale of atom OD plot
 OD_colorbar_range=[-0.1,0.5]*1.2;
@@ -82,6 +90,9 @@ ODToAtomNumber = 277.275;
 analysis_ROI=[470,640;546,846]; % usual values
 % analysis_ROI=[490,550;696,776]; % TEMPORARY for PSF (feel free to delete)
 % analysis_ROI=[470,770;546,846]; % for 9ms TOF
+% analysis_ROI=[470,770;546,846]; % for in situ to 9ms TOF Scan
+% analysis_ROI=[370,770;546,846]; % TEMPORARY for ODToAtomNumber calibration
+% analysis_ROI=[370,720;546,846]; % TEMPORARY for ODToAtomNumber calibration Round 2
 % analysis_ROI=[440,1040;546,846]; % for long TOF adiabatic release
 % analysis_ROI=[470,770;646,796]; % for long TOF of cold clouds
 % analysis_ROI=[470,590;200,1200]; % for Stern Gerlach in YS
@@ -93,6 +104,8 @@ analysis_ROI=[470,640;546,846]; % usual values
 % analysis_ROI=[250,750;500,1000]; % for Imaging the cMOT
 % analysis_ROI=[500,560;1,1392]; % for Imaging full length to Y beams
 % analysis_ROI=[470,770;585,885]; % for 301x301 pixel square
+% analysis_ROI=[570,970;546,846]; % for 18ms TOF
+analysis_ROI=[463,612;638,787]; % for X2 many shot average %[488,587;663,762]
 
 %unpack data from argument object
 savingname=run_config.namefile;
@@ -635,7 +648,6 @@ while n<=imacount
             v0 = vfit; % initial guesses
             
             % Perform the 2nd fit
-            vfit = lsqcurvefit(gaussian,v0,1:numel(vProfile),vProfile,vlb,vub,options);
             try
                 hfit = lsqcurvefit(gaussian,h0,1:numel(hProfile),hProfile,hlb,hub,options);
             catch
