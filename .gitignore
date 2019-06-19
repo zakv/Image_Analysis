@@ -24,3 +24,7 @@ Sample_Data/
 # Random Files Matlab makes #
 #############################
 *.asv
+
+# Files from attempts to make this 64 bit compatible #
+######################################################
+Camera_Control/64bit_Stuff/
