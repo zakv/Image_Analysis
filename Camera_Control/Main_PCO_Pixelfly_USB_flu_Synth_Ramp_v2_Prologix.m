@@ -1,4 +1,4 @@
-function Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data)
+function Main_PCO_Pixelfly_USB_flu_Synth_Ramp_v2_Prologix(run_config,image_instance_data)
 %This function takes a lot of arguments, so it's easier to pass them as one
 %big object.  Below are the meanings of some of that object's attributes.
 %image_instance_data should be a structure whose attributes will be
@@ -46,9 +46,16 @@ function Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data)
 
 %Set the frequency ramp parameters
 n_warmups=1; %Number of shots to take before starting to ramp the frequencies
-n_shots_per_freq=2; %Number of shots to take at each frequency
-frequency_list=linspace(1753,1353,41); %Frequencies to set the synth to in order, in MHz
+n_shots_per_freq=14; %Number of shots to take at each frequency
+frequency_list=linspace(5128,5228,21); %Frequencies to set the synth to in order, in MHz
 
+
+% frequency_list=linspace(800,1790,100); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(1800,1990,20); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(2000,2990,100); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(3000,3990,100); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(4000,4990,100); %Frequencies to set the synth to in order, in MHz
+% frequency_list=linspace(5000,5990,100); %Frequencies to set the synth to in order, in MHz
 
 %Settings used in large pump/flip/pump detuning scan:
 % frequency_list=linspace(15219,13219,201); %Frequencies to set the synth to in order, in MHz
@@ -116,7 +123,7 @@ frequency_list=linspace(1753,1353,41); %Frequencies to set the synth to in order
 
 
 %Configure GPIB parameters
-com_port='COM5'; %COM Port for prologix USB-GPIB adapter (run "mode" in windows command prompt to find it)
+com_port='COM6'; %COM Port for prologix USB-GPIB adapter (run "mode" in windows command prompt to find it)
 GPIB_address=10; %GPIB address of synthesizer
 %Close any existing connections to that GPIB device so we can open a new one
 existing_connections = instrfind('Port',com_port);
@@ -137,9 +144,15 @@ fprintf(sport, '++auto 0'); %Turns off the auto-read function which messes thing
 %line below
 %Region that may have atoms
 row_min=10; row_max=120; col_min=50; col_max=280; % usual values
+% row_min=35; row_max=75; col_min=125; col_max=230; % TEMPORARY for Pump/Flip/Pump... scan 1.5ms TOF
 % row_min=35; row_max=65; col_min=170; col_max=200; % TEMPORARY for in situ (feel free to delete)
 % row_min=40; row_max=100; col_min=150; col_max=220; % TEMPORARY for 5ms TOF (feel free to delete)
+% row_min=70; row_max=120; col_min=150; col_max=225; % TEMPORARY for 7ms TOF (feel free to delete)
+% row_min=90; row_max=155; col_min=150; col_max=220; % TEMPORARY for 9ms TOF (feel free to delete)
 % row_min=60; row_max=190; col_min=125; col_max=250; % for 9ms TOF
+% row_min=10; row_max=200; col_min=75; col_max=275; % for in situ to 9ms TOF Scan
+% row_min=10; row_max=250; col_min=75; col_max=275; % TEMPORARY for ODToAtomNumber calibration
+% row_min=10; row_max=250; col_min=75; col_max=275; % TEMPORARY for ODToAtomNumber calibration Round 2
 % row_min=10; row_max=50; col_min=10; col_max=70; % TEMPORARY for PSF (feel free to delete)
 % row_min=50; row_max=500; col_min=100; col_max=250; % for long TOF adiabatic release
 % row_min=30; row_max=250; col_min=30; col_max=120; % for long TOF of cold clouds
@@ -170,6 +183,9 @@ ODToAtomNumber = 277.275;
 analysis_ROI=[470,640;546,846]; % usual values
 % analysis_ROI=[490,550;696,776]; % TEMPORARY for PSF (feel free to delete)
 % analysis_ROI=[470,770;546,846]; % for 9ms TOF
+% analysis_ROI=[470,770;546,846]; % for in situ to 9ms TOF Scan
+% analysis_ROI=[370,770;546,846]; % TEMPORARY for ODToAtomNumber calibration
+% analysis_ROI=[370,720;546,846]; % TEMPORARY for ODToAtomNumber calibration Round 2
 % analysis_ROI=[440,1040;546,846]; % for long TOF adiabatic release
 % analysis_ROI=[470,770;646,796]; % for long TOF of cold clouds
 % analysis_ROI=[470,590;200,1200]; % for Stern Gerlach in YS
@@ -730,7 +746,6 @@ while n<=imacount
             v0 = vfit; % initial guesses
             
             % Perform the 2nd fit
-            vfit = lsqcurvefit(gaussian,v0,1:numel(vProfile),vProfile,vlb,vub,options);
             try
                 hfit = lsqcurvefit(gaussian,h0,1:numel(hProfile),hProfile,hlb,hub,options);
             catch
