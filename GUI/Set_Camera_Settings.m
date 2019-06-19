@@ -109,6 +109,7 @@ addpath(fullfile(project_root,'Classes'));
 addpath(fullfile(project_root,'Functions'));
 addpath(fullfile(project_root,'GUI'));
 addpath(fullfile(project_root,'Scripts'));
+addpath(fullfile(project_root,'Arduino','ArduinoIO'));
 %Add path for eigenbasis imaging.  Assume that the parent directory for
 %that project is in the same directory as this project (Currently both are
 %on the desktop of the Camera Computer
