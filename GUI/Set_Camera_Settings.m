@@ -368,12 +368,15 @@ try
         %Fluorescence image
         Main_PCO_Pixelfly_USB_flu1110_TwoImagesTrap(run_config,image_instance_data);
     end
-catch
+catch matlab_error
     %If there is an error, reset the camera
     Reset_Camera_Callback(hObject, eventdata, handles);
     
     %Also set the arduino to allow the sequence to trigger
     digitalWrite(trigger_arduino,arduino_trigger_pin,allow_trigger);
+    
+    %Now rethrow the error
+    rethrow(matlab_error);
 end
 
 %Main_PCO_Pixelfly_USB_07102014_flu(handles.namefile,handles.imacount,handles.pixel_rate,0,handles.trigger,handles.exposure_time,handles.timebase,handles.IR,handles.backloader,handles.sensor_format,handles.h_binning,handles.v_binning,handles.average,handles.twoimage);
