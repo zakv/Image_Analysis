@@ -22,7 +22,7 @@ function varargout = Set_Camera_Settings(varargin)
 
 % Edit the above text to modify the response to help Set_Camera_Settings
 
-% Last Modified by GUIDE v2.5 11-Jul-2018 19:46:25
+% Last Modified by GUIDE v2.5 19-Jun-2019 20:53:49
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1298,3 +1298,22 @@ handles.imacount=1e5; %Effectively run forever
 
 %Call the run button callback, but with the modified handles
 run_Callback(hObject, eventdata, handles);
+
+
+% --- Executes on button press in Reset_Trigger_Arduino.
+function Reset_Trigger_Arduino_Callback(hObject, eventdata, handles)
+% hObject    handle to Reset_Trigger_Arduino (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+%Declare global arduino variables (These are set in Main_PCO_Pixelfly...)
+global arduino_trigger_pin;
+global allow_trigger;
+global trigger_arduino;
+
+%Set the arduino to allow the sequence to trigger
+digitalWrite(trigger_arduino,arduino_trigger_pin,allow_trigger);
+disp('Set trigger arduino to allow sequence to trigger');
+
+
+
