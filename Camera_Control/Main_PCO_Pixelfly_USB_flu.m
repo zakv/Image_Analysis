@@ -75,17 +75,6 @@ row_min=10; row_max=120; col_min=50; col_max=280; % usual values
 row_min=25; row_max=75; col_min=25; col_max=75; % for 11ms TOF (For BEC many-shot average)
 % row_min=15; row_max=136; col_min=15; col_max=136; % for X2 many shot average %row_min=15; row_max=86; col_min=15; col_max=86;
 
-%Set range for colobar scale of atom OD plot
-OD_colorbar_range=[-0.1,0.5]*1.2;
-% OD_colorbar_range=[-0.1,0.5]*0.5;
-% OD_colorbar_range=[-0.1,2.];
-% OD_colorbar_range=[-0.1,0.4];
-
-% Define constants for the evaluation of the on-the-fly fit
-% Values taken from the M20180807.nb notebook
-tempT = 0.327953;
-ODToAtomNumber = 277.275;
-
 %Set region of interest for analysis [row_min,row_max;col_min,col_max]
 %(Note semicolon between row and columns indices)
 analysis_ROI=[470,640;546,846]; % usual values
@@ -109,6 +98,26 @@ analysis_ROI=[470,640;546,846]; % usual values
 analysis_ROI=[568,667;665,764]; % for 11ms TOF (For BEC many-shot average)
 % analysis_ROI=[463,612;638,787]; % for X2 many shot average %[488,587;663,762]
 
+%Set range for colobar scale of atom OD plot
+OD_colorbar_range=[-0.1,0.5]*1.2;
+% OD_colorbar_range=[-0.1,0.5]*0.5;
+% OD_colorbar_range=[-0.1,2.];
+% OD_colorbar_range=[-0.1,0.4];
+
+% Define constants for the evaluation of the on-the-fly fit
+% Values taken from the M20180807.nb notebook
+tempT = 0.327953;
+ODToAtomNumber = 277.275;
+
+% Define other constants
+%Arduino COM port. To check this, open the Arduino IDE, Click Tools->Port
+%and see what port has an Arduino
+arduino_com_port='COM4';
+arduino_trigger_pin=13; %Pin number for pin controlling trigger output
+allow_trigger=0; %Define pin output that allows sequence to be triggered
+hold_trigger=1; %Define pin output that stops sequence from getting triggered
+
+
 %unpack data from argument object
 savingname=run_config.namefile;
 saving_path=run_config.saving_path;
@@ -126,6 +135,22 @@ VB=run_config.v_binning;
 average=run_config.average;
 twoimage=run_config.twoimage;
 SNumber=run_config.starting_index;
+
+%Prepare Arduino
+%Make trigger_arduino a global variable so we can access it from other
+%functions. This is definitely not the smartest way to do this, but this
+%program should be rebuilt from scratch anyway.
+%To access this global variable in other functions or from the command
+%line, run "global trigger_arduino".
+global trigger_arduino;
+%Connect to the arduino if the connection does not already exist.
+if isempty(trigger_arduino)
+    trigger_arduino=arduino(arduino_com_port); %Conect to it
+    pinMode(trigger_arduino,arduino_trigger_pin,'output'); %Make pin an output
+end
+%Stop sequence until camera is ready
+digitalWrite(trigger_arduino,arduino_trigger_pin,hold_trigger);
+%Note that sequence may already be running, so this stop might be ignored.
 
 
 NumberOfAtomTotal=zeros(1,imacount);
@@ -360,7 +385,9 @@ end
 %here is the loop
 n=1;
 while n<=imacount
-    timed_out=false;    
+    timed_out=false;
+    %Set arduino to allow sequence to trigger
+    digitalWrite(trigger_arduino,arduino_trigger_pin,allow_trigger);
     
     %First image for this shot
     dwValidImageCnt=0;
@@ -500,6 +527,9 @@ while n<=imacount
                     timed_out=true;
                 end
             end
+            
+            %Got the last image, stop sequence until camera is ready again
+            digitalWrite(trigger_arduino, arduino_trigger_pin, hold_trigger);
             
             if(errorCode==0)
                 [errorCode,out_ptr]  = calllib('PCO_CAM_SDK','PCO_GetImageEx',out_ptr,act_segment,0,0,sBufNr,strSegment.wXRes,strSegment.wYRes,bitpix);
