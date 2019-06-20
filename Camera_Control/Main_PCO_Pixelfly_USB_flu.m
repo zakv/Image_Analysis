@@ -49,60 +49,35 @@ function Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data)
 %line below
 % %Region that may have atoms
 row_min=10; row_max=120; col_min=50; col_max=280; % usual values
-% row_min=35; row_max=75; col_min=125; col_max=230; % TEMPORARY for Pump/Flip/Pump... scan 1.5ms TOF
-% row_min=35; row_max=65; col_min=170; col_max=200; % TEMPORARY for in situ (feel free to delete)
-% row_min=40; row_max=100; col_min=150; col_max=220; % TEMPORARY for 5ms TOF (feel free to delete)
-% row_min=70; row_max=120; col_min=150; col_max=225; % TEMPORARY for 7ms TOF (feel free to delete)
-% row_min=90; row_max=155; col_min=150; col_max=220; % TEMPORARY for 9ms TOF (feel free to delete)
 % row_min=60; row_max=190; col_min=125; col_max=250; % for 9ms TOF
 % row_min=10; row_max=200; col_min=75; col_max=275; % for in situ to 9ms TOF Scan
-% row_min=10; row_max=250; col_min=75; col_max=275; % TEMPORARY for ODToAtomNumber calibration
-% row_min=10; row_max=250; col_min=75; col_max=275; % TEMPORARY for ODToAtomNumber calibration Round 2
-% row_min=10; row_max=50; col_min=10; col_max=70; % TEMPORARY for PSF (feel free to delete)
-% row_min=50; row_max=500; col_min=100; col_max=250; % for long TOF adiabatic release
-% row_min=30; row_max=250; col_min=30; col_max=120; % for long TOF of cold clouds
-% row_min=10; row_max=601; col_min=75; col_max=250; % for Stern Gerlach in YS
-% row_min=20; row_max=100; col_min=1; col_max=1001; % for Stern Gerlach in YS
-% row_min=20; row_max=250; col_min=125; col_max=250; % for Stern Gerlach
-% row_min=20; row_max=471; col_min=75; col_max=225; % for long TOF Stern Gerlach
 % row_min=1; row_max=21; col_min=75; col_max=225; % for fine precision aligning X to Y
 % row_min=10; row_max=40; col_min=1; col_max=81; % for looking at oscillations in crossed ODT
 % row_min=110; row_max=160; col_min=1; col_max=301; % for Raman Kick Sequence with 9ms TOF
 % row_min=1; row_max=501; col_min=1; col_max=501; % for Imaging the cMOT
-% row_min=10; row_max=40; col_min=1; col_max=1392; % for Imaging full length to Y beams
+% row_min=10; row_max=40; col_min=1; col_max=1392; % for Imaging full length of Y beams
 % row_min=10; row_max=200; col_min=50; col_max=250; % for 301x301 pixel square
 % row_min=150; row_max=300; col_min=125; col_max=250; % for 18ms TOF
-row_min=25; row_max=75; col_min=25; col_max=75; % for 11ms TOF (For BEC many-shot average)
-% row_min=15; row_max=136; col_min=15; col_max=136; % for X2 many shot average %row_min=15; row_max=86; col_min=15; col_max=86;
+% row_min=25; row_max=75; col_min=25; col_max=75; % for 11ms TOF (For BEC many-shot average)
+% row_min=15; row_max=136; col_min=15; col_max=136; % for X2 many shot average
 
 %Set region of interest for analysis [row_min,row_max;col_min,col_max]
 %(Note semicolon between row and columns indices)
 analysis_ROI=[470,640;546,846]; % usual values
-% analysis_ROI=[490,550;696,776]; % TEMPORARY for PSF (feel free to delete)
 % analysis_ROI=[470,770;546,846]; % for 9ms TOF
 % analysis_ROI=[470,770;546,846]; % for in situ to 9ms TOF Scan
-% analysis_ROI=[370,770;546,846]; % TEMPORARY for ODToAtomNumber calibration
-% analysis_ROI=[370,720;546,846]; % TEMPORARY for ODToAtomNumber calibration Round 2
-% analysis_ROI=[440,1040;546,846]; % for long TOF adiabatic release
-% analysis_ROI=[470,770;646,796]; % for long TOF of cold clouds
-% analysis_ROI=[470,590;200,1200]; % for Stern Gerlach in YS
-% analysis_ROI=[470,770;5469846]; % for Stern Gerlach
-% analysis_ROI=[470,940;546,846]; % for long TOF Stern Gerlach
 % analysis_ROI=[510,530;546,846]; % for fine precision aligning X to Y
 % analysis_ROI=[500,550;666,746]; % for looking at oscillations in crossed ODT
 % analysis_ROI=[470,640;546,846]; % for Raman Kick Sequence with 9ms TOF
 % analysis_ROI=[250,750;500,1000]; % for Imaging the cMOT
-% analysis_ROI=[500,560;1,1392]; % for Imaging full length to Y beams
+% analysis_ROI=[500,560;1,1392]; % for Imaging full length of Y beams
 % analysis_ROI=[470,770;585,885]; % for 301x301 pixel square
 % analysis_ROI=[570,970;546,846]; % for 18ms TOF
-analysis_ROI=[568,667;665,764]; % for 11ms TOF (For BEC many-shot average)
+% analysis_ROI=[568,667;665,764]; % for 11ms TOF (For BEC many-shot average)
 % analysis_ROI=[463,612;638,787]; % for X2 many shot average %[488,587;663,762]
 
 %Set range for colobar scale of atom OD plot
 OD_colorbar_range=[-0.1,0.5]*1.2;
-% OD_colorbar_range=[-0.1,0.5]*0.5;
-% OD_colorbar_range=[-0.1,2.];
-% OD_colorbar_range=[-0.1,0.4];
 
 % Define constants for the evaluation of the on-the-fly fit
 % Values taken from the M20180807.nb notebook
