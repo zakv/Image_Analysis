@@ -141,21 +141,25 @@ average=run_config.average;
 twoimage=run_config.twoimage;
 SNumber=run_config.starting_index;
 
-%Prepare Arduino
-%Make trigger_arduino a global variable so we can access it from other
-%functions. This is definitely not the smartest way to do this, but this
-%program should be rebuilt from scratch anyway.
-%To access this global variable in other functions or from the command
-%line, run "global trigger_arduino".
+% Prepare Arduino
+% Make trigger_arduino a global variable so we can access it from other
+% functions. This is definitely not the smartest way to do this, but this
+% program should be rebuilt from scratch anyway.
+% To access this global variable in other functions or from the command
+% line, run "global trigger_arduino".
 global trigger_arduino;
 %Connect to the arduino if the connection does not already exist.
 if isempty(trigger_arduino)
     trigger_arduino=arduino(arduino_com_port); %Conect to it
     pinMode(trigger_arduino,arduino_trigger_pin,'output'); %Make pin an output
 end
-%Stop sequence until camera is ready
+% Stop sequence until camera is ready
+% Note that sequence may already be running, so this stop might be ignored.
 digitalWrite(trigger_arduino,arduino_trigger_pin,hold_trigger);
-%Note that sequence may already be running, so this stop might be ignored.
+% Use onCleanup to set arduino to allow triggers after this function exists
+% This allows the sequence to keep getting triggered if this function
+% errors out or is killed by a keyboard interupt
+Cleanup1=onCleanup(@()digitalWrite(trigger_arduino,arduino_trigger_pin,allow_trigger));
 
 
 NumberOfAtomTotal=zeros(1,imacount);

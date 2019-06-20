@@ -369,7 +369,10 @@ try
         Main_PCO_Pixelfly_USB_flu1110_TwoImagesTrap(run_config,image_instance_data);
     end
 catch
-    %If there is an error, set the arduino to allow the sequence to trigger
+    %If there is an error, reset the camera
+    Reset_Camera_Callback(hObject, eventdata, handles);
+    
+    %Also set the arduino to allow the sequence to trigger
     digitalWrite(trigger_arduino,arduino_trigger_pin,allow_trigger);
 end
 
