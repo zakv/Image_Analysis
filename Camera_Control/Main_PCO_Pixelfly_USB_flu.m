@@ -110,8 +110,13 @@ tempT = 0.327953;
 ODToAtomNumber = 277.275;
 
 % Define other constants
-%Arduino COM port. To check this, open the Arduino IDE, Click Tools->Port
-%and see what port has an Arduino
+% Make arduino constants global so other functions can use them
+% Arduino COM port. To check this, open the Arduino IDE, Click Tools->Port
+% and see what port has an Arduino
+global arduino_com_port
+global arduino_trigger_pin
+global allow_trigger
+global hold_trigger
 arduino_com_port='COM4';
 arduino_trigger_pin=13; %Pin number for pin controlling trigger output
 allow_trigger=0; %Define pin output that allows sequence to be triggered

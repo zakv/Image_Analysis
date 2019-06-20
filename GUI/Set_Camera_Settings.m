@@ -335,6 +335,12 @@ function run_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 %Main_PCO_Pixelfly_USB_28062012(handles.imacount,handles.pixel_rate,handles.double_image,handles.trigger,handles.exposure_time,handles.timebase,handles.IR,handles.backloader,handles.sensor_format,handles.h_binning,handles.v_binning);
 
+%Declare arduino variables global in case we need them (These are set in
+%Main_PCO_Pixelfly...)
+global arduino_trigger_pin;
+global allow_trigger;
+global trigger_arduino;
+
 %Set the run_config parameters that control how Main_PCO... runs
 run_config=handles;
 run_config.double_image=0;
@@ -352,14 +358,19 @@ if exist(handles.saving_path,'dir')~=7
 end
 
 %Run the camera data acquisition software
-if handles.absorption_or_fluorescence==1
-    %Absorption image
-    Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data);
-%     Main_PCO_Pixelfly_USB_flu_Synth_Ramp(run_config,image_instance_data); %For detuning scan with NI USB-GPIB Adapter
-%     Main_PCO_Pixelfly_USB_flu_Synth_Ramp_v2_Prologix(run_config,image_instance_data); %For detuning scan with Prologix USB-GPIB adapter
-elseif handles.absorption_or_fluorescence==2
-    %Fluorescence image
-    Main_PCO_Pixelfly_USB_flu1110_TwoImagesTrap(run_config,image_instance_data);
+try
+    if handles.absorption_or_fluorescence==1
+        %Absorption image
+        Main_PCO_Pixelfly_USB_flu(run_config,image_instance_data);
+        %     Main_PCO_Pixelfly_USB_flu_Synth_Ramp(run_config,image_instance_data); %For detuning scan with NI USB-GPIB Adapter
+        %     Main_PCO_Pixelfly_USB_flu_Synth_Ramp_v2_Prologix(run_config,image_instance_data); %For detuning scan with Prologix USB-GPIB adapter
+    elseif handles.absorption_or_fluorescence==2
+        %Fluorescence image
+        Main_PCO_Pixelfly_USB_flu1110_TwoImagesTrap(run_config,image_instance_data);
+    end
+catch
+    %If there is an error, set the arduino to allow the sequence to trigger
+    digitalWrite(trigger_arduino,arduino_trigger_pin,allow_trigger);
 end
 
 %Main_PCO_Pixelfly_USB_07102014_flu(handles.namefile,handles.imacount,handles.pixel_rate,0,handles.trigger,handles.exposure_time,handles.timebase,handles.IR,handles.backloader,handles.sensor_format,handles.h_binning,handles.v_binning,handles.average,handles.twoimage);
