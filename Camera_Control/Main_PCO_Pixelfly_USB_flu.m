@@ -127,16 +127,15 @@ SNumber=run_config.starting_index;
 global trigger_arduino;
 %Connect to the arduino if the connection does not already exist.
 if isempty(trigger_arduino)
-    trigger_arduino=arduino(arduino_com_port); %Conect to it
-    pinMode(trigger_arduino,arduino_trigger_pin,'output'); %Make pin an output
+    trigger_arduino=arduino(arduino_com_port,'uno'); %Conect to it
 end
 % Stop sequence until camera is ready
 % Note that sequence may already be running, so this stop might be ignored.
-digitalWrite(trigger_arduino,arduino_trigger_pin,hold_trigger);
+writeDigitalPin(trigger_arduino,arduino_trigger_pin,hold_trigger);
 % Use onCleanup to set arduino to allow triggers after this function exists
 % This allows the sequence to keep getting triggered if this function
 % errors out or is killed by a keyboard interupt
-Cleanup1=onCleanup(@()digitalWrite(trigger_arduino,arduino_trigger_pin,allow_trigger));
+Cleanup1=onCleanup(@()writeDigitalPin(trigger_arduino,arduino_trigger_pin,allow_trigger));
 
 
 NumberOfAtomTotal=zeros(1,imacount);
@@ -373,7 +372,7 @@ n=1;
 while n<=imacount
     timed_out=false;
     %Set arduino to allow sequence to trigger
-    digitalWrite(trigger_arduino,arduino_trigger_pin,allow_trigger);
+    writeDigitalPin(trigger_arduino,arduino_trigger_pin,allow_trigger);
     
     %First image for this shot
     dwValidImageCnt=0;
@@ -515,7 +514,7 @@ while n<=imacount
             end
             
             %Got the last image, stop sequence until camera is ready again
-            digitalWrite(trigger_arduino, arduino_trigger_pin, hold_trigger);
+            writeDigitalPin(trigger_arduino, arduino_trigger_pin, hold_trigger);
             
             if(errorCode==0)
                 [errorCode,out_ptr]  = calllib('PCO_CAM_SDK','PCO_GetImageEx',out_ptr,act_segment,0,0,sBufNr,strSegment.wXRes,strSegment.wYRes,bitpix);

@@ -109,7 +109,6 @@ addpath(fullfile(project_root,'Classes'));
 addpath(fullfile(project_root,'Functions'));
 addpath(fullfile(project_root,'GUI'));
 addpath(fullfile(project_root,'Scripts'));
-addpath(fullfile(project_root,'Arduino','ArduinoIO'));
 %Add path for eigenbasis imaging.  Assume that the parent directory for
 %that project is in the same directory as this project (Currently both are
 %on the desktop of the Camera Computer
@@ -373,7 +372,7 @@ catch matlab_error
     Reset_Camera_Callback(hObject, eventdata, handles);
     
     %Also set the arduino to allow the sequence to trigger
-    digitalWrite(trigger_arduino,arduino_trigger_pin,allow_trigger);
+    writeDigitalPin(trigger_arduino,arduino_trigger_pin,allow_trigger);
     
     %Now rethrow the error
     rethrow(matlab_error);
@@ -1315,7 +1314,7 @@ global allow_trigger;
 global trigger_arduino;
 
 %Set the arduino to allow the sequence to trigger
-digitalWrite(trigger_arduino,arduino_trigger_pin,allow_trigger);
+writeDigitalPin(trigger_arduino,arduino_trigger_pin,allow_trigger);
 disp('Set trigger arduino to allow sequence to trigger');
 
 
