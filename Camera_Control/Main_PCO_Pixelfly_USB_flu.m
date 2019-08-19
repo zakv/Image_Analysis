@@ -59,7 +59,7 @@ row_min=10; row_max=120; col_min=50; col_max=280; % usual values
 % row_min=10; row_max=200; col_min=50; col_max=250; % for 301x301 pixel square
 % row_min=150; row_max=300; col_min=125; col_max=250; % for 18ms TOF
 % row_min=25; row_max=75; col_min=25; col_max=75; % for 11ms TOF (For BEC many-shot average)
-row_min=25; row_max=125; col_min=25; col_max=125; % for 11ms TOF (For compressed BEC many-shot average)
+% row_min=25; row_max=125; col_min=25; col_max=125; % for 11ms TOF (For compressed BEC many-shot average)
 % row_min=15; row_max=136; col_min=15; col_max=136; % for X2 many shot average
 
 %Set region of interest for analysis [row_min,row_max;col_min,col_max]
@@ -75,7 +75,7 @@ analysis_ROI=[470,640;546,846]; % usual values
 % analysis_ROI=[470,770;585,885]; % for 301x301 pixel square
 % analysis_ROI=[570,970;546,846]; % for 18ms TOF
 % analysis_ROI=[568,667;665,764]; % for 11ms TOF (For BEC many-shot average)
-analysis_ROI=[543,692;640,789]; % for 11ms TOF (For compressed BEC many-shot average)
+% analysis_ROI=[543,692;640,789]; % for 11ms TOF (For compressed BEC many-shot average)
 % analysis_ROI=[463,612;638,787]; % for X2 many shot average %[488,587;663,762]
 
 %Set range for colobar scale of atom OD plot
