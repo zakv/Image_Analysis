@@ -1313,6 +1313,19 @@ global arduino_trigger_pin;
 global allow_trigger;
 global trigger_arduino;
 
+%The following try catch reconnects to the board if it has been
+%unplugged/replugged
+%To check for that, we issue a pointless command (checking the voltage on a
+%random pin) which throws an error if the board has been
+%unplugged/replugged. If that is the case, then reconnecting should work.
+try
+    %Issue command that does nothing except possibly throw an error
+    trigger_arduino.readVoltage(0);
+catch
+    %If there was an error, reconnect to the board.
+    trigger_arduino=arduino(arduino_com_port,'uno'); %Conect to it
+end
+
 %Set the arduino to allow the sequence to trigger
 writeDigitalPin(trigger_arduino,arduino_trigger_pin,allow_trigger);
 disp('Set trigger arduino to allow sequence to trigger');
